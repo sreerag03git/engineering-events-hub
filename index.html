@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HELM · Engineering Student Events Command Deck — Hackathons, Competitions &amp; More</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0a1628; --navy2:#0e1f3d; --navy3:#132a52;
+  --panel:rgba(255,255,255,.035); --panel2:rgba(255,255,255,.06); --panelhi:rgba(255,255,255,.09);
+  --line:rgba(150,180,235,.12); --line2:rgba(150,180,235,.24);
+  --tx:#e6ecf7; --mu:#8fa0bf; --mu2:#aeb9d4;
+  --gold:#e8b84b; --gold2:#f3d488; --goldbg:rgba(232,184,75,.12); --goldln:rgba(232,184,75,.34);
+  --teal:#2dd4bf; --blue:#6ea7f7; --red:#ef6f6f; --amber:#eab55b; --green:#4fce8e; --purple:#b193f2; --pink:#ee85b5;
+  --sans:'Space Grotesk',system-ui,sans-serif; --mono:'Space Mono',ui-monospace,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--navy);color:var(--tx);font-size:14px;line-height:1.6;min-height:100vh}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:var(--navy)}
+::-webkit-scrollbar-thumb{background:var(--navy3);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:#1c3667}
+a{color:var(--blue);text-decoration:none}
+a:hover{text-decoration:underline}
+button,select,input,textarea{font-family:var(--sans)}
+
+/* ───── HERO ───── */
+.hero{position:relative;background:linear-gradient(150deg,#06101f 0%,#0c1d38 55%,#0a1c34 100%);border-bottom:1px solid var(--line);overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 82% 8%,rgba(232,184,75,.09),transparent 60%),radial-gradient(ellipse 45% 65% at 8% 95%,rgba(45,212,191,.06),transparent 60%);pointer-events:none}
+.hero-in{max-width:1300px;margin:0 auto;padding:34px 30px 26px;position:relative}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);background:var(--goldbg);border:1px solid var(--goldln);border-radius:20px;padding:4px 14px;margin-bottom:14px}
+h1.brand{font-weight:700;font-size:clamp(23px,3.6vw,36px);line-height:1.16;letter-spacing:-.015em}
+h1.brand span{color:var(--gold)}
+.tagline{margin-top:9px;font-size:13.5px;color:var(--mu2);max-width:660px}
+.live-row{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px;align-items:center}
+.live-chip{display:inline-flex;align-items:center;gap:7px;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:5px 13px;font-size:11.5px;color:var(--mu2)}
+.live-chip b{color:var(--tx);font-weight:600}
+.pulse{width:7px;height:7px;border-radius:50%;background:var(--teal);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(45,212,191,.5)}50%{opacity:.55;box-shadow:0 0 0 5px rgba(45,212,191,0)}}
+.stat-band{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:11px;margin-top:22px}
+.stat{background:rgba(10,22,40,.6);border:1px solid var(--line);border-radius:12px;padding:13px 15px;backdrop-filter:blur(4px)}
+.stat .n{font-family:var(--mono);font-weight:700;font-size:24px;color:var(--gold2)}
+.stat .l{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--mu);margin-top:3px}
+
+/* ───── NAV ───── */
+.navbar{position:sticky;top:0;z-index:100;background:rgba(10,22,40,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav-in{max-width:1300px;margin:0 auto;padding:0 30px;display:flex;gap:2px;overflow-x:auto}
+.ntab{background:none;border:none;border-bottom:2px solid transparent;color:var(--mu);font-size:13px;font-weight:500;padding:15px 17px;cursor:pointer;white-space:nowrap;transition:color .18s,border-color .18s;display:flex;align-items:center;gap:7px}
+.ntab:hover{color:var(--tx)}
+.ntab.on{color:var(--gold);border-bottom-color:var(--gold)}
+.badge-n{background:var(--goldbg);border:1px solid var(--goldln);color:var(--gold2);font-size:10px;font-weight:700;border-radius:10px;padding:1px 7px;font-family:var(--mono)}
+
+/* ───── LAYOUT ───── */
+.wrap{max-width:1300px;margin:0 auto;padding:26px 30px 90px}
+.view{display:none}
+.view.on{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.sect-h{display:flex;align-items:center;gap:13px;margin:28px 0 14px}
+.sect-h:first-child{margin-top:0}
+.sect-h h2{font-weight:600;font-size:19px;color:var(--tx)}
+.sect-h .sub{font-size:12px;color:var(--mu)}
+.sect-h::after{content:'';flex:1;height:1px;background:var(--line)}
+.info-box{background:rgba(45,212,191,.05);border:1px solid rgba(45,212,191,.2);border-left:3px solid var(--teal);border-radius:9px;padding:11px 15px;font-size:12.5px;color:var(--mu2);line-height:1.7;margin-bottom:16px}
+.info-box b{color:var(--teal)}
+.info-box.gold{background:var(--goldbg);border-color:var(--goldln);border-left-color:var(--gold)}
+.info-box.gold b{color:var(--gold2)}
+
+/* ───── FILTER BAR ───── */
+.fbar{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px 17px;display:flex;flex-direction:column;gap:11px;margin-bottom:14px}
+.frow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.flab{font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--mu);min-width:60px}
+.chip{border:1px solid var(--line);background:transparent;color:var(--mu2);border-radius:18px;padding:4px 13px;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;white-space:nowrap}
+.chip:hover{border-color:var(--goldln);color:var(--gold2)}
+.chip.on{background:var(--goldbg);border-color:var(--goldln);color:var(--gold2);font-weight:600}
+.chip.on.teal{background:rgba(45,212,191,.12);border-color:rgba(45,212,191,.4);color:var(--teal)}
+#q{flex:1;min-width:220px;background:var(--navy2);border:1px solid var(--line);border-radius:10px;padding:9px 14px;color:var(--tx);font-size:13px;outline:none;transition:border-color .18s}
+#q:focus{border-color:var(--goldln)}
+#q::placeholder{color:var(--mu)}
+.count-line{font-size:12.5px;color:var(--mu);margin:2px 2px 14px}
+.count-line b{color:var(--gold2);font-family:var(--mono)}
+
+/* ───── CARDS ───── */
+.egrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
+.gh{grid-column:1/-1;display:flex;align-items:center;gap:12px;margin:20px 0 2px}
+.gh:first-child{margin-top:0}
+.gh .t{font-weight:600;font-size:16px;color:var(--gold2)}
+.gh .c{font-size:11px;color:var(--mu);font-family:var(--mono)}
+.gh::after{content:'';flex:1;height:1px;background:var(--line)}
+.ecard{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:17px;display:flex;flex-direction:column;gap:9px;transition:transform .16s,border-color .16s,box-shadow .16s;position:relative}
+.ecard:hover{transform:translateY(-2px);border-color:var(--line2);box-shadow:0 12px 34px -16px rgba(0,0,0,.75)}
+.ecard.tracked{border-left:3px solid var(--gold)}
+.ecard.past{opacity:.5}
+.ec-top{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.tb{font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2.5px 9px;border-radius:6px;white-space:nowrap}
+.t-competition{background:rgba(79,206,142,.13);color:#8fe0b3;border:1px solid rgba(79,206,142,.26)}
+.t-conference{background:rgba(110,167,247,.13);color:#9dc2fa;border:1px solid rgba(110,167,247,.25)}
+.t-fest{background:rgba(177,147,242,.14);color:#c9b3f6;border:1px solid rgba(177,147,242,.26)}
+.t-award{background:rgba(238,133,181,.13);color:#f3a9c9;border:1px solid rgba(238,133,181,.25)}
+.t-hackathon{background:rgba(239,111,111,.13);color:#f59b9b;border:1px solid rgba(239,111,111,.26)}
+.rb{font-size:10px;font-weight:600;padding:2.5px 9px;border-radius:6px;background:var(--panel2);color:var(--mu2);border:1px solid var(--line)}
+.vb{font-size:9.5px;font-weight:700;letter-spacing:.04em;padding:2.5px 8px;border-radius:6px}
+.vb.ver{background:rgba(79,206,142,.1);color:var(--green);border:1px solid rgba(79,206,142,.2)}
+.vb.est{background:rgba(234,181,91,.09);color:var(--amber);border:1px solid rgba(234,181,91,.2)}
+.ec-name{font-weight:600;font-size:15px;line-height:1.35;color:var(--tx)}
+.ec-org{font-size:11px;color:var(--mu);margin-top:-3px}
+.ec-when{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--mu2)}
+.ec-when .dt{font-family:var(--mono);font-size:11.5px;color:var(--gold2);font-weight:700}
+.cdown{font-size:10px;font-weight:700;font-family:var(--mono);padding:2px 8px;border-radius:10px}
+.cd-soon{background:rgba(239,111,111,.15);color:#f59b9b}
+.cd-mid{background:rgba(234,181,91,.14);color:#f0cd8c}
+.cd-far{background:rgba(79,206,142,.12);color:#8fe0b3}
+.cd-tbc{background:var(--panel2);color:var(--mu)}
+.cd-live{background:rgba(45,212,191,.16);color:var(--teal)}
+.ec-desc{font-size:12.5px;color:#9fabc6;line-height:1.62}
+.ec-what{font-size:11.5px;color:var(--gold2);background:var(--goldbg);border:1px solid var(--goldln);border-radius:8px;padding:6px 10px}
+.ec-what b{color:var(--gold);font-weight:700}
+.ec-dls{display:flex;flex-direction:column;gap:5px;background:var(--navy2);border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+.dl-line{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--mu2)}
+.dl-line .k{font-size:9px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:1.5px 7px;border-radius:4px;background:var(--panel2);color:var(--mu2);white-space:nowrap}
+.dl-line.passed{opacity:.42}
+.dl-line.passed .txt{text-decoration:line-through}
+.dl-line .cdown{margin-left:auto}
+.ec-fee{font-size:11.5px;color:var(--teal)}
+.ec-foot{display:flex;align-items:center;gap:8px;margin-top:auto;padding-top:9px;border-top:1px solid var(--line);flex-wrap:wrap}
+.ec-link{font-size:11.5px;color:var(--blue)}
+.trk{margin-left:auto;display:flex;align-items:center;gap:6px}
+.st-sel{background:var(--navy2);border:1px solid var(--line);color:var(--mu2);border-radius:8px;font-size:11px;padding:4px 8px;cursor:pointer;outline:none}
+.st-sel:focus{border-color:var(--goldln)}
+.st-sel.has{border-color:var(--goldln);color:var(--gold2)}
+.note-btn{background:none;border:1px solid var(--line);border-radius:8px;color:var(--mu);font-size:11px;padding:4px 9px;cursor:pointer;transition:all .15s}
+.note-btn:hover,.note-btn.has{color:var(--gold2);border-color:var(--goldln)}
+.note-area{width:100%;background:var(--navy2);border:1px solid var(--goldln);border-radius:8px;color:var(--tx);font-size:12px;padding:8px 10px;margin-top:6px;resize:vertical;min-height:52px;outline:none;display:none}
+.note-area.open{display:block}
+.no-results{grid-column:1/-1;text-align:center;padding:56px 20px;color:var(--mu);font-size:14px}
+.st-pill{font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2.5px 10px;border-radius:10px}
+.stp-interested{background:rgba(110,167,247,.15);color:#9dc2fa}
+.stp-preparing{background:rgba(234,181,91,.15);color:#f0cd8c}
+.stp-submitted{background:rgba(177,147,242,.16);color:#c9b3f6}
+.stp-accepted{background:rgba(79,206,142,.16);color:#8fe0b3}
+.stp-attended{background:rgba(45,212,191,.16);color:var(--teal)}
+.stp-skipped{background:var(--panel2);color:var(--mu)}
+
+/* ───── DASHBOARD ───── */
+.dash-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:16px}
+@media(max-width:900px){.dash-grid{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:19px}
+.panel h3{font-weight:600;font-size:15px;margin-bottom:3px}
+.panel .ps{font-size:11.5px;color:var(--mu);margin-bottom:13px}
+.urg-row{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:var(--navy2);cursor:pointer;transition:border-color .15s}
+.urg-row:hover{border-color:var(--goldln)}
+.urg-days{font-family:var(--mono);font-size:11px;font-weight:700;min-width:60px;text-align:center;padding:5px 6px;border-radius:8px}
+.urg-body{flex:1;min-width:0}
+.urg-name{font-size:12.5px;font-weight:600;color:var(--tx);line-height:1.3}
+.urg-det{font-size:11px;color:var(--mu);margin-top:1px}
+.reg-bar{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.reg-bar .rl{font-size:11.5px;color:var(--mu2);min-width:130px}
+.reg-bar .track{flex:1;height:7px;background:var(--navy2);border-radius:4px;overflow:hidden}
+.reg-bar .fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--gold),var(--gold2))}
+.reg-bar .rn{font-family:var(--mono);font-size:11px;color:var(--gold2);min-width:22px;text-align:right}
+.feat-card{display:flex;gap:12px;align-items:center;padding:11px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:var(--navy2);cursor:pointer;transition:border-color .15s}
+.feat-card:hover{border-color:var(--goldln)}
+.feat-rank{font-family:var(--mono);font-weight:700;font-size:16px;color:var(--goldln);min-width:24px}
+.rtable{width:100%;border-collapse:collapse;font-size:12px}
+.rtable th{text-align:left;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--mu);padding:7px 9px;border-bottom:1px solid var(--line2)}
+.rtable td{padding:7px 9px;border-bottom:1px solid var(--line);color:var(--mu2);vertical-align:top}
+.rtable td:first-child{color:var(--tx);font-weight:500}
+.rtable tr:last-child td{border-bottom:none}
+
+/* ───── TIMELINE ───── */
+.tl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+.mcard{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.mhead{background:var(--navy2);padding:11px 15px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line)}
+.mname{font-weight:600;font-size:14px;color:var(--gold2)}
+.mcount{font-size:10px;font-family:var(--mono);background:var(--goldbg);color:var(--gold2);padding:2px 9px;border-radius:10px;font-weight:600}
+.mrow{padding:10px 15px;border-bottom:1px solid var(--line);display:flex;gap:11px;cursor:pointer;transition:background .12s}
+.mrow:hover{background:rgba(255,255,255,.02)}
+.mrow:last-child{border-bottom:none}
+.mdate{font-family:var(--mono);font-size:10.5px;color:var(--gold);min-width:48px;padding-top:2px}
+.mi-name{font-size:12.5px;font-weight:500;color:var(--tx);line-height:1.35}
+.mi-loc{font-size:10.5px;color:var(--mu);margin-top:1px}
+
+/* ───── DEADLINES ───── */
+.dlv-row{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:14px;margin-bottom:8px;flex-wrap:wrap;cursor:pointer;transition:border-color .15s}
+.dlv-row:hover{border-color:var(--line2)}
+.dlv-row.r-urgent{border-color:rgba(239,111,111,.4);background:linear-gradient(90deg,rgba(239,111,111,.06),var(--panel))}
+.dlv-row.r-soon{border-color:rgba(234,181,91,.3)}
+.dlv-days{font-family:var(--mono);font-size:11.5px;font-weight:700;min-width:70px;text-align:center;padding:5px 8px;border-radius:9px}
+.dlv-name{font-size:13px;font-weight:600;color:var(--tx);flex:1;min-width:200px}
+.dlv-det{font-size:11px;color:var(--mu)}
+.dlv-date{font-family:var(--mono);font-size:11px;color:var(--mu2)}
+
+/* ───── CONSOLE ───── */
+.cons-head{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+.cons-stat{flex:1;min-width:112px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 15px;text-align:center}
+.cons-stat .n{font-family:var(--mono);font-weight:700;font-size:22px}
+.cons-stat .l{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--mu);margin-top:2px}
+.cons-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.abtn{background:var(--panel);border:1px solid var(--line);color:var(--mu2);border-radius:10px;padding:8px 15px;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s}
+.abtn:hover{border-color:var(--goldln);color:var(--gold2)}
+.abtn.danger:hover{border-color:rgba(239,111,111,.4);color:var(--red)}
+.cd-form{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:17px;margin-bottom:18px;display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.cd-form .fld{display:flex;flex-direction:column;gap:5px}
+.cd-form label{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--mu)}
+.cd-form input{background:var(--navy2);border:1px solid var(--line);border-radius:9px;color:var(--tx);font-size:13px;padding:8px 12px;outline:none}
+.cd-form input:focus{border-color:var(--goldln)}
+.cd-form input[type=date]{color-scheme:dark}
+.gold-btn{background:linear-gradient(135deg,var(--gold),#c99a3f);border:none;color:#1a1204;border-radius:9px;padding:9px 20px;font-size:12.5px;font-weight:700;cursor:pointer;transition:filter .15s}
+.gold-btn:hover{filter:brightness(1.09)}
+.empty-note{color:var(--mu);font-size:13px;padding:24px;text-align:center;border:1px dashed var(--line2);border-radius:12px}
+.del-x{background:none;border:none;color:var(--mu);font-size:15px;cursor:pointer;padding:2px 8px;border-radius:6px}
+.del-x:hover{color:var(--red);background:rgba(239,111,111,.1)}
+
+footer{border-top:1px solid var(--line);padding:24px 30px;text-align:center;font-size:11px;color:var(--mu);line-height:1.9}
+footer b{color:var(--gold2)}
+@media(max-width:640px){.hero-in,.wrap{padding-left:16px;padding-right:16px}.nav-in{padding:0 10px}.egrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ HERO ═══════════ -->
+<header class="hero"><div class="hero-in">
+  <div class="eyebrow">🛰 HELM · Engineering Student Events Command Deck</div>
+  <h1 class="brand">Every hackathon, competition &amp; challenge — <span>for engineering students, all fields</span></h1>
+  <div class="tagline">Hackathons, design &amp; build competitions, student fests, paper conferences &amp; awards you can <b style="color:var(--gold2)">enter, build for, present at, or submit to</b> — across software/AI, robotics, mechanical, aero/space, civil, electrical, chemical, marine &amp; cyber. Through June 2028. Visitor-only trade shows cut. Past events auto-hide; deadlines count down live.</div>
+  <div class="live-row">
+    <span class="live-chip"><span class="pulse"></span> Live · <b id="todayLbl"></b></span>
+    <span class="live-chip">Data seeded <b id="updLbl">—</b></span>
+    <button class="abtn" id="btnCheckUpd" style="padding:5px 13px;font-size:11.5px;border-radius:20px">🔄 Check for updates</button>
+    <span class="live-chip">Past events auto-hidden · console saved on-device</span>
+  </div>
+  <div class="stat-band">
+    <div class="stat"><div class="n" id="stUpcoming">—</div><div class="l">Open to you</div></div>
+    <div class="stat"><div class="n" id="stHack">—</div><div class="l">Hackathons</div></div>
+    <div class="stat"><div class="n" id="stDl90">—</div><div class="l">Deadlines · 90 days</div></div>
+    <div class="stat"><div class="n" id="stComp">—</div><div class="l">Competitions</div></div>
+    <div class="stat"><div class="n" id="stFree">—</div><div class="l">Free / funded</div></div>
+    <div class="stat"><div class="n" id="stTracked">—</div><div class="l">You're tracking</div></div>
+  </div>
+</div></header>
+
+<!-- ═══════════ NAV ═══════════ -->
+<nav class="navbar"><div class="nav-in">
+  <button class="ntab on" data-v="dash">◈ Dashboard</button>
+  <button class="ntab" data-v="all">📋 All Events</button>
+  <button class="ntab" data-v="hack">💻 Hackathons</button>
+  <button class="ntab" data-v="comp">🏆 Competitions &amp; Awards</button>
+  <button class="ntab" data-v="india">🇮🇳 India &amp; Defence</button>
+  <button class="ntab" data-v="timeline">📅 Timeline</button>
+  <button class="ntab" data-v="deadlines">⏱ Deadlines</button>
+  <button class="ntab" data-v="console">☰ My Console <span class="badge-n" id="consBadge">0</span></button>
+</div></nav>
+
+<div class="wrap">
+
+<!-- ═══════════ DASHBOARD ═══════════ -->
+<div class="view on" id="v-dash">
+  <div class="dash-grid">
+    <div>
+      <div class="panel">
+        <h3>⚡ Act now — nearest deadlines</h3>
+        <div class="ps">Every submission, abstract, registration &amp; entry deadline in the next 120 days. Click to open the event.</div>
+        <div id="dashUrgent"></div>
+      </div>
+      <div class="panel" style="margin-top:16px">
+        <h3>★ Highest-value targets</h3>
+        <div class="ps">Expert priority order — the events with the biggest payoff for a naval-architecture student, weighing prestige, cost, and how open they are to you.</div>
+        <div id="dashFeat"></div>
+      </div>
+    </div>
+    <div>
+      <div class="panel">
+        <h3>By region</h3>
+        <div class="ps">Upcoming events open to you</div>
+        <div id="dashRegions"></div>
+      </div>
+      <div class="panel" style="margin-top:16px">
+        <h3>Memberships that unlock these</h3>
+        <div class="ps">Cheaper together than one textbook — they gate the competitions, discounts &amp; travel grants.</div>
+        <table class="rtable">
+          <thead><tr><th>Body</th><th>~/yr</th><th>Unlocks</th></tr></thead>
+          <tbody>
+            <tr><td>SNAME</td><td>$40</td><td>Lisnyk, scholarship, SMC rates</td></tr>
+            <tr><td>RINA</td><td>Free–low</td><td>Awards, ICCAS free entry, journals</td></tr>
+            <tr><td>IMarEST</td><td>Reduced</td><td>Young Members Design Challenge, INEC</td></tr>
+            <tr><td>ASME</td><td>$25</td><td>OMAE discount + travel grants</td></tr>
+            <tr><td>IEEE OES</td><td>$15</td><td>OCEANS + travel grants</td></tr>
+            <tr><td>INA India</td><td>Very low</td><td>India network, free webinars</td></tr>
+            <tr><td>SPE</td><td>Low</td><td>GOTECH student experience, paper contest</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="panel" style="margin-top:16px">
+        <h3>Travel-grant sources</h3>
+        <div class="ps">Apply for every conference — most students never ask.</div>
+        <table class="rtable"><tbody>
+          <tr><td>IMU HOD / dept fund</td><td>Ask first — internal money exists</td></tr>
+          <tr><td>SNAME sections</td><td>~$1,000 + scholarship</td></tr>
+          <tr><td>ASME / IEEE OES</td><td>OMAE &amp; OCEANS travel</td></tr>
+          <tr><td>ISOPE / RINA</td><td>Student paper author support</td></tr>
+          <tr><td>G-NAOE</td><td>Student travel grants</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ ALL EVENTS ═══════════ -->
+<div class="view" id="v-all">
+  <div class="fbar">
+    <div class="frow"><input id="q" placeholder="🔍  Search events, cities, organisers, topics, deadlines…"></div>
+    <div class="frow"><span class="flab">Type</span>
+      <button class="chip on" data-f="type" data-val="all">All</button>
+      <button class="chip" data-f="type" data-val="competition">🏆 Competition</button>
+      <button class="chip" data-f="type" data-val="hackathon">💻 Hackathon</button>
+      <button class="chip" data-f="type" data-val="conference">🎓 Conference</button>
+      <button class="chip" data-f="type" data-val="fest">🎉 Student fest</button>
+      <button class="chip" data-f="type" data-val="award">🏅 Award</button>
+    </div>
+    <div class="frow"><span class="flab">Field</span>
+      <button class="chip on" data-f="field" data-val="all">All fields</button>
+      <button class="chip" data-f="field" data-val="software">💻 Software/AI</button>
+      <button class="chip" data-f="field" data-val="robotics">🤖 Robotics</button>
+      <button class="chip" data-f="field" data-val="mechanical">⚙️ Mech/Auto</button>
+      <button class="chip" data-f="field" data-val="aerospace">🚀 Aero/Space</button>
+      <button class="chip" data-f="field" data-val="civil">🏗️ Civil</button>
+      <button class="chip" data-f="field" data-val="electrical">⚡ Electrical</button>
+      <button class="chip" data-f="field" data-val="chemical">⚗️ Chemical</button>
+      <button class="chip" data-f="field" data-val="marine">⚓ Marine</button>
+      <button class="chip" data-f="field" data-val="cyber">🔒 Cyber</button>
+      <button class="chip" data-f="field" data-val="any">🌐 Any/Interdisc.</button>
+    </div>
+    <div class="frow"><span class="flab">Region</span>
+      <button class="chip on" data-f="region" data-val="all">🌐 All</button>
+      <button class="chip" data-f="region" data-val="india">🇮🇳 India</button>
+      <button class="chip" data-f="region" data-val="gcc">🇦🇪 GCC / Middle East</button>
+      <button class="chip" data-f="region" data-val="europe">🇪🇺 Europe</button>
+      <button class="chip" data-f="region" data-val="americas">🌎 Americas</button>
+      <button class="chip" data-f="region" data-val="asia">🌏 Asia-Pacific</button>
+      <button class="chip" data-f="region" data-val="global">🌐 Global / Online</button>
+    </div>
+    <div class="frow"><span class="flab">Year</span>
+      <button class="chip on" data-f="year" data-val="all">All</button>
+      <button class="chip" data-f="year" data-val="2026">2026</button>
+      <button class="chip" data-f="year" data-val="2027">2027</button>
+      <button class="chip" data-f="year" data-val="2028">2028</button>
+      <span style="width:12px"></span><span class="flab">More</span>
+      <button class="chip" data-f="free" data-val="1">💚 Free / funded</button>
+      <button class="chip" data-f="past" data-val="1">🕰 Include past</button>
+    </div>
+    <div class="frow"><span class="flab">Group by</span>
+      <button class="chip on teal" data-f="group" data-val="date">📅 Date</button>
+      <button class="chip teal" data-f="group" data-val="month">▤ Month</button>
+      <button class="chip teal" data-f="group" data-val="year">Y Year</button>
+      <button class="chip teal" data-f="group" data-val="region">🌍 Region / Country</button>
+      <button class="chip teal" data-f="group" data-val="field">◆ Field</button>
+      <button class="chip teal" data-f="group" data-val="type">◆ Type</button>
+    </div>
+  </div>
+  <div class="count-line" id="countLine"></div>
+  <div class="egrid" id="egrid"></div>
+</div>
+
+<!-- ═══════════ HACKATHONS ═══════════ -->
+<div class="view" id="v-hack">
+  <div class="info-box gold">Every hackathon I can track — <b>government, defence &amp; space, corporate, and the global student-hackathon circuit</b> — plus the <b>platforms where hundreds more live</b> (MLH, Devpost, Devfolio, Unstop, HackerEarth, ETHGlobal). Open to engineering students of any field. Sorted soonest-deadline first.</div>
+  <div class="egrid" id="hackGrid"></div>
+</div>
+
+<!-- ═══════════ COMPETITIONS ═══════════ -->
+<div class="view" id="v-comp">
+  <div class="info-box gold">These are the events where you <b>build, design, and compete</b>, or <b>submit a paper / essay / project</b> — the highest-CV-value category. Global elite first. Everything here is open to student entrants.</div>
+  <div class="egrid" id="compGrid"></div>
+</div>
+
+<!-- ═══════════ INDIA & DEFENCE ═══════════ -->
+<div class="view" id="v-india">
+  <div class="info-box">India has the richest, cheapest ecosystem of events you can enter <b>right now</b> — national defence &amp; space hackathons (you've already done ISRO BAH &amp; DAE Techtathon), naval innovation challenges, and NAOE college fests. Most are free. Follow the official handles for exact dates as they drop.</div>
+  <div class="sect-h"><h2>🛡️ National Defence &amp; Space Challenges</h2><span class="sub">DRDO · ISRO · Indian Navy · DAE · shipyard PSUs — open to Indian students</span></div>
+  <div class="egrid" id="defGrid"></div>
+  <div class="sect-h"><h2>🎓 College Fests &amp; India Conferences</h2><span class="sub">present papers, race models, network</span></div>
+  <div class="egrid" id="indiaFestGrid"></div>
+</div>
+
+<!-- ═══════════ TIMELINE ═══════════ -->
+<div class="view" id="v-timeline">
+  <div class="sect-h"><h2>Month-by-month plan</h2><span class="sub">upcoming events by start date · click any row to open it</span></div>
+  <div class="tl-grid" id="tlGrid"></div>
+</div>
+
+<!-- ═══════════ DEADLINES ═══════════ -->
+<div class="view" id="v-deadlines">
+  <div class="sect-h"><h2>Deadline tracker</h2><span class="sub">every entry, abstract &amp; registration date still ahead — auto-sorted from today</span></div>
+  <div style="margin-bottom:14px"><button class="chip" id="dlPastToggle">Show passed deadlines</button></div>
+  <div id="dlList"></div>
+</div>
+
+<!-- ═══════════ CONSOLE ═══════════ -->
+<div class="view" id="v-console">
+  <div class="sect-h"><h2>My console</h2><span class="sub">private — saved in this browser (localStorage). Export to back up or move devices.</span></div>
+  <div class="cons-head" id="consStats"></div>
+  <div class="cons-actions">
+    <button class="abtn" id="btnExport">⬇ Export backup (JSON)</button>
+    <button class="abtn" id="btnImport">⬆ Import backup</button>
+    <input type="file" id="importFile" accept=".json" style="display:none">
+    <button class="abtn danger" id="btnClear">✕ Clear all my data</button>
+  </div>
+  <div class="cd-form">
+    <div class="fld" style="flex:2;min-width:200px"><label>Custom reminder / deadline</label><input id="cdTitle" placeholder="e.g. Email HOD re: IAMU sponsorship"></div>
+    <div class="fld"><label>Date</label><input type="date" id="cdDate"></div>
+    <div class="fld" style="flex:1;min-width:150px"><label>Note (optional)</label><input id="cdNote" placeholder="details…"></div>
+    <button class="gold-btn" id="cdAdd">+ Add</button>
+  </div>
+  <div class="sect-h"><h2 style="font-size:15px">Custom reminders</h2></div>
+  <div id="customList"></div>
+  <div class="sect-h"><h2 style="font-size:15px">Tracked events</h2><span class="sub">set a status on any event card to pin it here</span></div>
+  <div class="egrid" id="consGrid"></div>
+</div>
+
+</div><!-- /wrap -->
+
+<footer>
+  <b>HELM</b> — Engineering Student Events Command Deck · hackathons · competitions · fests · conferences · awards<br>
+  Open to all engineering fields, through June 2028. Dates marked <b>est.</b> are projected from each event's usual annual cadence — always confirm on the official site before paying or booking travel. Platform cards (MLH, Devpost, Devfolio, Unstop, HackerEarth, ETHGlobal) are where hundreds more hackathons live.<br>
+  Seeded <b id="footUpd">Oct 2026</b> · tap 🔄 Check for updates (top) to pull newer listings.
+</footer>
+
+<script>
+/* ═══════════ DATA ═══════════
+   type: competition | hackathon | conference | fest | award
+   region: gcc | india | europe | americas | asia | global
+   defence:true  -> India national defence/space challenge
+   start/end ISO or null · ver:true web-verified · est:true estimated
+   what: one-line student action ("what you actually do / submit")      */
+const EVENTS=[
+/* ══ GLOBAL COMPETITIONS & AWARDS ══ */
+{id:"lisnyk27",name:"SNAME Dr. James A. Lisnyk Ship Design Competition 2026-27",org:"SNAME",type:"competition",region:"global",flag:"🌐",country:"Global",city:"Remote · awards at SMC 2027",start:"2027-06-30",end:"2027-06-30",dateText:"Final report 30 Jun 2027",year:"2027",tier:1,free:true,
+ what:"Submit a full ship-design report (team of 1-6). Surface ship or submarine.",
+ desc:"The world's most prestigious student ship-design competition. All members must be SNAME student members. Even shortlisting changes your placement trajectory — build it on your HOD project.",fee:"FREE entry · SNAME membership ~$40/yr",url:"https://sname.org/dr-james-lisnyk-student-ship-design-competition",
+ deadlines:[{t:"Entry",d:"2027-03-02",txt:"Entry application ~Mar 2027 (2026 cycle: 2 Mar)"},{t:"Report",d:"2027-06-30",txt:"Final design report 30 Jun 2027"}],est:true},
+{id:"imoessay26",name:"IMO International Maritime Essay Competition 2026",org:"International Maritime Organization",type:"award",region:"global",flag:"🌐",country:"Global",city:"Online (IMO)",start:"2026-09-24",end:"2026-09-24",dateText:"World Maritime Day · 24 Sep 2026",year:"2026",tier:1,free:true,
+ what:"Write & submit an essay on the year's maritime theme.",
+ desc:"Free annual essay award around World Maritime Day. As an IMU student you have an institutional edge via the IMO-DG Shipping link. Noticed by class societies & shipping firms at placement time.",fee:"Completely FREE",url:"https://www.imo.org",
+ deadlines:[{t:"Submit",d:"2026-07-31",txt:"Deadline typically Jul-Aug — CHECK imo.org now"}],est:true},
+{id:"subrace26",name:"Hybrid-Powered Submarine Racing — Design Competition DC-2026",org:"Submarine Racing Series",type:"competition",region:"global",flag:"🌐",country:"Global (race: Canary Is.)",city:"Online design submission",start:"2026-07-31",end:"2026-07-31",dateText:"Deadline 31 Jul 2026",year:"2026",free:false,
+ what:"Submit a submarine design — CFD, hybrid human+electric propulsion, structures.",
+ desc:"Top designs are invited to build & race in the Canary Islands, autumn 2027. Directly tests your NA skills. Deadline is imminent — verify & submit.",fee:"Check site",url:"https://subracingseries.com",
+ deadlines:[{t:"Submit",d:"2026-07-31",txt:"Design submission deadline 31 Jul 2026"}],est:true},
+{id:"monaco27",name:"Monaco Energy Boat Challenge 2027 (14th ed.)",org:"Yacht Club de Monaco",type:"competition",region:"europe",flag:"🇲🇨",country:"Monaco",city:"Port Hercule, Monaco",start:"2027-07-06",end:"2027-07-10",dateText:"~Jul 2027 (est.)",year:"2027",tier:1,free:true,
+ what:"Design, build & race a hydrogen / solar / electric boat as a university team.",
+ desc:"43 teams, 21 nations, plus a Job Forum with industry. FREE for competing teams — one of the most prestigious student maritime competitions in the world.",fee:"FREE for competing university teams",url:"https://energyboatchallenge.com",
+ deadlines:[{t:"Apply",d:"2026-11-15",txt:"Team applications open ~Oct-Nov 2026"},{t:"Proposal",d:"2027-01-31",txt:"Technical proposal ~Jan 2027"}],est:true},
+{id:"materov27",name:"MATE ROV World Championship 2027 + Regionals",org:"MATE II",type:"competition",region:"global",flag:"🌐",country:"Global (India & Saudi regionals)",city:"Regionals worldwide",start:"2027-06-20",end:"2027-06-25",dateText:"Regionals spring · Worlds ~Jun 2027",year:"2027",free:false,
+ what:"Design, build & pilot an ROV through real ocean-engineering missions.",
+ desc:"World's largest underwater-ROV competition. India & Saudi Arabia (KAUST) regionals feed the world final. Hull design, hydrodynamics, control systems.",fee:"$250-450/team (regionals)",url:"https://materovcompetition.org",
+ deadlines:[{t:"Register",d:"2026-12-01",txt:"Team registration opens ~1 Dec 2026"}],est:true},
+{id:"robosub27",name:"RoboSub 2027 — AUV Championship",org:"RoboNation / US Office of Naval Research",type:"competition",region:"americas",flag:"🇺🇸",country:"USA",city:"TRANSDEC, San Diego",start:"2027-07-25",end:"2027-07-31",dateText:"~Jul-Aug 2027",year:"2027",free:false,
+ what:"Build an autonomous underwater vehicle + submit a design report & video.",
+ desc:"The world's most famous AUV competition. IIT Bombay and other Indian teams compete. Winning teams land research contracts and job offers.",fee:"~$1,500-2,000/team",url:"https://robonation.org/competition/robosub/",
+ deadlines:[{t:"Register",d:"2027-02-15",txt:"Registration ~Feb 2027"},{t:"Report",d:"2027-05-15",txt:"Design report + video ~May 2027"}],est:true},
+{id:"roboboat27",name:"RoboBoat 2027 (18th ed.)",org:"RoboNation / ONR",type:"competition",region:"americas",flag:"🇺🇸",country:"USA",city:"Sarasota, FL",start:"2027-02-20",end:"2027-02-25",dateText:"~Feb 2027 (est.)",year:"2027",free:false,
+ what:"Build & test an autonomous surface vessel + submit a design report.",
+ desc:"Autonomous surface-vehicle competition — hull design + controls + autonomy. 37 teams from 10 countries in 2026.",fee:"~$500-800/team",url:"https://roboboat.org",
+ deadlines:[{t:"Register",d:"2026-10-15",txt:"Registration opens ~Oct 2026"},{t:"Report",d:"2026-11-30",txt:"Design report ~Nov 2026"}],est:true},
+{id:"isr27",name:"International Submarine Races (ISR) 2027 — 19th ed.",org:"Foundation for Underwater Research & Education",type:"competition",region:"americas",flag:"🇺🇸",country:"USA",city:"David Taylor Model Basin, Maryland",start:"2027-06-21",end:"2027-06-25",dateText:"~Jun 2027 (est.)",year:"2027",free:false,
+ what:"Build & race a human-powered submarine in the US Navy's towing tank.",
+ desc:"Biennial build-and-race — the full NA design-build-test cycle. Résumé-headline material for a naval architect.",fee:"Team entry + travel",url:"https://internationalsubmarineraces.org",
+ deadlines:[{t:"Register",d:"2026-12-15",txt:"Team registration ~late 2026 (est.)"}],est:true},
+{id:"eisr28",name:"eISR 2028 — European International Submarine Races",org:"IMarEST / QinetiQ",type:"competition",region:"europe",flag:"🇬🇧",country:"UK",city:"QinetiQ Ocean Basin, Haslar",start:null,end:null,dateText:"2028 (biennial)",year:"2028",free:false,
+ what:"Design, build & race a human-powered submarine (Europe's largest tank).",
+ desc:"A 2-year team project — start forming the IMU Vizag team now so a vessel is ready for 2028 qualification.",fee:"Team entry + build costs — seek sponsorship",url:"https://subrace.eu",
+ deadlines:[{t:"Watch",txt:"Qualification rounds announced ~2027"}],est:true},
+{id:"mecc27",name:"Marine Energy Collegiate Competition 2026-27",org:"NREL / US Dept of Energy",type:"competition",region:"global",flag:"🌐",country:"Global (US-run)",city:"Remote + US finals",start:null,end:null,dateText:"Cycle opens ~Aug 2026",year:"2027",free:true,
+ what:"Design a blue-economy marine-energy concept (beginner Kilowatt League).",
+ desc:"Non-US institutions fully eligible. A clean crossover of naval architecture + renewables. Great first team competition.",fee:"FREE to apply",url:"https://www.nrel.gov/water/marine-energy-collegiate-competition",
+ deadlines:[{t:"Apply",d:"2026-09-30",txt:"2026-27 applications open ~Aug 2026 (est.)"}],est:true},
+{id:"imarestymdc26",name:"IMarEST Young Members' Design Challenge 2026",org:"IMarEST",type:"competition",region:"global",flag:"🌐",country:"UK / remote-friendly",city:"UK finals (~Dec)",start:"2026-12-08",end:"2026-12-08",dateText:"Finals ~Dec 2026",year:"2026",free:true,
+ what:"Team ship-design challenge on a themed brief + present it.",
+ desc:"2025 theme was a zero-emission cargo vessel. Judged by senior industry figures. Join IMarEST free/reduced as a student to enter.",fee:"FREE for IMarEST student members",url:"https://www.imarest.org",
+ deadlines:[{t:"Brief",d:"2026-09-22",txt:"2026 brief launches ~Sep (est.)"}],est:true},
+{id:"snamebdc27",name:"SNAME Boat Design Competition 2027",org:"SNAME Apprentice School",type:"competition",region:"global",flag:"🌐",country:"Global",city:"Remote design + US build day",start:null,end:null,dateText:"Registration ~Sep 2026",year:"2027",free:false,
+ what:"Design & build a functional sailboat.",
+ desc:"Lower barrier than Lisnyk, same SNAME network. International student teams welcome.",fee:"SNAME membership ~$40/yr",url:"https://www.sname.org",
+ deadlines:[{t:"Register",d:"2026-09-01",txt:"2027 cycle registration ~Sep 2026 (est.)"}],est:true},
+{id:"asne27",name:"ASNE Student Ship Design Competition 2026-27",org:"American Society of Naval Engineers",type:"competition",region:"global",flag:"🌐",country:"Global (US-run)",city:"Remote",start:null,end:null,dateText:"Annual · watch site",year:"2027",free:true,rolling:true,
+ what:"Submit a naval-vessel design; judged by active US naval engineers.",
+ desc:"Open to international students. Pairs perfectly with a Lisnyk entry — one strong design, two competitions.",fee:"FREE · ASNE student membership ~$30/yr",url:"https://www.navalengineers.org",
+ deadlines:[{t:"Watch",txt:"2026-27 cycle — navalengineers.org"}]},
+{id:"snak",name:"SNAK Student Ship Design Competition — Korea",org:"Society of Naval Architects of Korea",type:"competition",region:"asia",flag:"🇰🇷",country:"South Korea",city:"Busan / Seoul",start:null,end:null,dateText:"Annual · watch ekmoa.org",year:"2027",free:false,rolling:true,
+ what:"Submit a ship design; international entries increasingly welcome.",
+ desc:"Korea's Lisnyk — judged by HD Hyundai, Samsung Heavy & Hanwha Ocean executives. Winners often fast-track to Korean-shipyard internships.",fee:"Nominal",url:"https://ekmoa.org",
+ deadlines:[{t:"Watch",txt:"Watch ekmoa.org + SNAK LinkedIn"}]},
+{id:"pier71_27",name:"PIER71 Smart Port Challenge 2027",org:"MPA Singapore + NUS Enterprise",type:"competition",region:"asia",flag:"🇸🇬",country:"Singapore",city:"Singapore",start:"2027-09-01",end:"2027-09-30",dateText:"Finals ~Sep 2027",year:"2027",free:true,
+ what:"Pitch a maritime-innovation solution (port digitalisation, autonomy, decarb).",
+ desc:"Global maritime innovation challenge — winners get seed funding + MPA mentoring. Ideal if you lean digital/AI.",fee:"FREE to apply · seed funding prize",url:"https://pier71.io",
+ deadlines:[{t:"Apply",d:"2027-05-31",txt:"Applications ~Apr-Jun 2027"}],est:true},
+{id:"zayed",name:"Zayed Sustainability Prize — Global Universities track",org:"UAE Government",type:"award",region:"gcc",flag:"🇦🇪",country:"UAE",city:"Abu Dhabi (ceremony)",start:null,end:null,dateText:"Annual · submissions ~mid-year",year:"2027",free:true,
+ what:"Submit a sustainability project (zero-emission vessel, wave energy, offshore clean tech).",
+ desc:"UAE's flagship global award. The Abu Dhabi ceremony puts you in front of UAE officials & industry.",fee:"FREE to enter",url:"https://zayedsustainabilityprize.com",
+ deadlines:[{t:"Watch",txt:"Next cycle ~Jun-Jul 2027 — verify on site"}],est:true},
+{id:"snamescholar27",name:"SNAME Undergraduate Scholarship 2027",org:"SNAME",type:"award",region:"global",flag:"🌐",country:"Global",city:"Online application",start:"2027-06-01",end:"2027-06-01",dateText:"Apply by 1 Jun 2027",year:"2027",free:false,
+ what:"Submit a 500-600-word essay + academic record; funds tuition & fees.",
+ desc:"Open worldwide. Must hold SNAME membership by 1 Feb of the application year. One award per person ever — start the essay months early.",fee:"SNAME membership ~$40/yr",url:"https://sname.org",
+ deadlines:[{t:"Member",d:"2027-02-01",txt:"Hold SNAME membership by 1 Feb 2027"},{t:"Apply",d:"2027-06-01",txt:"Application deadline 1 Jun 2027"}],est:true},
+{id:"rinacontraros",name:"RINA Peter Contraros Award — Marine Structures Student Paper",org:"RINA",type:"award",region:"global",flag:"🌐",country:"Global",city:"Submit by email",start:null,end:null,dateText:"Annual · ~Jan window",year:"2027",free:true,
+ what:"Submit a paper on strength/safety/reliability of marine structures.",
+ desc:"Annual student award; papers up to 2 years old accepted. Submit via awards@rina.org.uk.",fee:"FREE",url:"https://rina.org.uk",
+ deadlines:[{t:"Submit",d:"2027-01-15",txt:"~Jan 2027 window (est.)"}],est:true},
+{id:"rinaaward27",name:"RINA Student Award for Excellence",org:"RINA",type:"award",region:"global",flag:"🌐",country:"Global",city:"Department nomination",start:null,end:null,dateText:"Nominations ~Feb 2027",year:"2027",free:true,
+ what:"Get your department to nominate a strong paper/dissertation/project.",
+ desc:"RINA recognises outstanding student work globally, published in RINA journals. Free student membership.",fee:"FREE to enter",url:"https://rina.org.uk/students",
+ deadlines:[{t:"Nominate",d:"2027-02-15",txt:"2027 window opens ~Feb (est.)"}],est:true},
+
+/* ══ INDIA — NATIONAL DEFENCE & SPACE ══ */
+{id:"swavlamban",name:"Swavlamban / Naval Innovathon — Indian Navy",org:"Indian Navy · NIIO",type:"hackathon",region:"india",flag:"🇮🇳",country:"India",city:"New Delhi + online",start:"2026-11-01",end:"2026-11-30",dateText:"~Nov 2026 (annual)",year:"2026",tier:1,free:true,defence:true,
+ what:"Solve real maritime operational problem statements as a student/researcher team.",
+ desc:"The Navy's flagship innovation seminar & hackathon (NIIO). Problem statements like satellite-aware maritime route intelligence, swarm algorithms, encrypted maritime networks — squarely naval. Grew from 800 to 3,000+ participants. THE defence event for a naval-architecture student.",fee:"FREE",url:"https://niio.gov.in",
+ deadlines:[{t:"Watch",d:"2026-09-30",txt:"Innovathon problem statements & registration ~Sep-Oct 2026"}],est:true},
+{id:"instep",name:"IN-STEP — Indian Naval Students' Technical Engagement Programme",org:"Indian Navy · NIIO",type:"hackathon",region:"india",flag:"🇮🇳",country:"India",city:"Online internships",start:null,end:null,dateText:"Rolling · online",year:"2026",free:true,defence:true,rolling:true,
+ what:"Take an online naval internship solving a posted technical problem.",
+ desc:"NIIO engages students at premier institutions with online internships on real naval problems — a direct, low-friction route into the Navy's innovation ecosystem.",fee:"FREE",url:"https://niio.gov.in",
+ deadlines:[{t:"Watch",txt:"Problem statements posted periodically — niio.gov.in"}]},
+{id:"bah27",name:"Bharatiya Antariksh Hackathon (BAH) — ISRO",org:"ISRO · IN-SPACe · Hack2skill",type:"hackathon",region:"india",flag:"🇮🇳",country:"India",city:"Online + grand finale",start:"2027-07-01",end:"2027-08-31",dateText:"~Jun-Aug annually",year:"2027",tier:1,free:true,defence:true,
+ what:"Build a solution to an ISRO problem (geospatial, AI/ML, image processing, space science).",
+ desc:"ISRO's flagship national space hackathon (you did the 2026 edition). Teams of 3-4 students; finalists get ISRO internship consideration + travel reimbursed. The 2027 edition follows the same June-launch pattern.",fee:"FREE · ISRO internship for finalists",url:"https://hack2skill.com/event/bah2026/",
+ deadlines:[{t:"Register",d:"2027-07-01",txt:"Registration ~Jun 2027 (2026: closed 1 Jul)"}],est:true},
+{id:"daetechtathon",name:"DAE Techtathon — Department of Atomic Energy",org:"DAE (BARC / IGCAR ecosystem)",type:"hackathon",region:"india",flag:"🇮🇳",country:"India",city:"India + online",start:null,end:null,dateText:"Annual · watch dae.gov.in",year:"2027",free:true,defence:true,rolling:true,
+ what:"Solve DAE/nuclear-science tech problem statements as a student team.",
+ desc:"The national DAE innovation challenge you competed in (Techtathon 2.0). Broad engineering problem statements — a strong national credential. Watch DAE / BARC / IGCAR channels for the next edition.",fee:"FREE",url:"https://dae.gov.in",
+ deadlines:[{t:"Watch",txt:"Next edition announced on dae.gov.in / BARC channels"}],est:true},
+{id:"dare2dream",name:"DRDO Dare to Dream 6.0 — National Innovation Contest",org:"DRDO · Ministry of Defence",type:"hackathon",region:"india",flag:"🇮🇳",country:"India",city:"India (online submission)",start:null,end:null,dateText:"Annual · launches ~Oct",year:"2027",free:true,defence:true,
+ what:"Submit a disruptive defence-tech idea (individual >=18 or startup).",
+ desc:"DRDO's national contest under Atmanirbhar Bharat. AUV/UUV, naval structures & ship systems are in-scope. Cash awards + incubation. Open to any Indian above 18 — you qualify as an individual.",fee:"FREE",url:"https://drdo.gov.in/drdo/dare-dream-contest",
+ deadlines:[{t:"Submit",d:"2027-01-31",txt:"Submission ~Jan (5.0 closed 31 Jan) — watch drdo.gov.in"}],est:true},
+{id:"nstl",name:"DRDO NSTL Vizag — Dare2Dream & student projects",org:"DRDO Naval Science & Technological Laboratory",type:"hackathon",region:"india",flag:"🇮🇳",country:"India",city:"Visakhapatnam — your city",start:null,end:null,dateText:"Rolling · local advantage",year:"2026",free:true,defence:true,rolling:true,tier:1,
+ what:"Do a project/internship with the naval-systems lab in your own city.",
+ desc:"NSTL (underwater weapons & naval systems) is literally in Vizag. AUV design contests, research internships for NAOE students. Walk in and introduce yourself from IMU Vizag — a geographic + academic edge no other student has.",fee:"FREE",url:"https://www.drdo.gov.in",
+ deadlines:[{t:"Act",txt:"Visit NSTL's education/outreach cell in person"}]},
+{id:"sih26",name:"Smart India Hackathon 2026 — Maritime & Defence tracks",org:"MoE / AICTE · Navy, MoPSW, shipyard PSUs",type:"hackathon",region:"india",flag:"🇮🇳",country:"India",city:"Nodal centres, India",start:"2026-12-01",end:"2026-12-15",dateText:"Grand finale ~Dec 2026",year:"2026",free:true,defence:true,
+ what:"Solve a ministry/Navy/shipyard problem statement in a team of 6.",
+ desc:"India's biggest hackathon. Indian Navy, Ministry of Ports, DRDO, Cochin Shipyard & GRSE regularly post maritime problems — naval architecture, AUV, port logistics.",fee:"FREE · ₹1 lakh prize per problem",url:"https://sih.gov.in",
+ deadlines:[{t:"Register",d:"2026-08-15",txt:"College registration opens ~Aug 2026"}],est:true},
+{id:"idex_disc",name:"iDEX DISC / ADITI — Defence Innovation Challenges",org:"Ministry of Defence · iDEX",type:"hackathon",region:"india",flag:"🇮🇳",country:"India",city:"Pan-India",start:null,end:null,dateText:"Rolling — new challenges periodically",year:"2026",free:true,defence:true,rolling:true,
+ what:"Take a Defence Innovation Challenge problem via a university lab/incubator.",
+ desc:"AUV/UUV design, ship systems, naval structures & OPV concepts appear as problem statements. Grant funding up to ₹1.5 Cr for selected solutions.",fee:"FREE · funding up to ₹1.5 Cr",url:"https://idex.gov.in",
+ deadlines:[{t:"Watch",txt:"Rolling — check idex.gov.in monthly"}]},
+{id:"grse",name:"GRSE Accelerated Innovation Nurturing Scheme (GAINS)",org:"Garden Reach Shipbuilders & Engineers (PSU)",type:"hackathon",region:"india",flag:"🇮🇳",country:"India",city:"Kolkata + online",start:null,end:null,dateText:"Annual · watch grse.in",year:"2027",free:true,defence:true,rolling:true,
+ what:"Solve a warship-builder's shipbuilding/production problem statement.",
+ desc:"A defence-shipyard PSU innovation challenge — directly shipbuilding-relevant, with a path to working with a warship builder.",fee:"FREE",url:"https://www.grse.in",
+ deadlines:[{t:"Watch",txt:"Editions announced on grse.in"}]},
+{id:"cochin",name:"Cochin Shipyard Innovation / Internship Challenges",org:"Cochin Shipyard Limited (PSU)",type:"hackathon",region:"india",flag:"🇮🇳",country:"India",city:"Kochi",start:null,end:null,dateText:"Periodic · watch site",year:"2027",free:true,defence:true,rolling:true,
+ what:"Enter a shipyard student innovation contest or apply for a project internship.",
+ desc:"India's premier shipbuilding & repair PSU runs student innovation competitions and internships periodically — pure naval-architecture relevance.",fee:"FREE",url:"https://cochinshipyard.in",
+ deadlines:[{t:"Watch",txt:"Watch cochinshipyard.in careers/notices"}]},
+
+/* ══ INDIA — FESTS & CONFERENCES ══ */
+{id:"samudra27",name:"Samudramanthan 2027 — IIT Kharagpur",org:"OENA Dept, IIT KGP",type:"fest",region:"india",flag:"🇮🇳",country:"India",city:"IIT Kharagpur",start:"2027-03-15",end:"2027-03-17",dateText:"Mar-Apr 2027 (est.)",year:"2027",free:true,
+ what:"Compete in Naval Warfare (aqua-robotics), Offshore Riggers, paper presentation.",
+ desc:"India's biggest NAOE student fest. You've competed before — aim to WIN this cycle. Networking with IIT KGP ocean-engineering faculty who sit on national committees.",fee:"FREE to enter",url:"https://www.instagram.com/sm.iitkgp",
+ deadlines:[{t:"Register",d:"2027-02-01",txt:"Watch @sm.iitkgp ~Feb 2027"}],est:true},
+{id:"tempest27",name:"TEMPEST 2027 — IMU Kolkata Marine Fest",org:"IMU Kolkata (MERI)",type:"fest",region:"india",flag:"🇮🇳",country:"India",city:"IMU Kolkata",start:"2027-02-15",end:"2027-02-17",dateText:"Feb-Mar 2027 (est.)",year:"2027",free:true,
+ what:"Enter ship design, model making, Naval Warfare robotics & quizzes.",
+ desc:"Your sister campus's marine fest — representing Vizag campus here is an easy, strong move, and you'll know most of the participants.",fee:"Free / nominal",url:"https://www.instagram.com/meritempest",
+ deadlines:[{t:"Register",d:"2027-01-15",txt:"Watch @meritempest ~Jan 2027"}],est:true},
+{id:"shaastra27",name:"Shaastra 2027 — IIT Madras",org:"IIT Madras",type:"fest",region:"india",flag:"🇮🇳",country:"India",city:"IIT Madras, Chennai",start:"2027-01-02",end:"2027-01-06",dateText:"2-6 Jan 2027 (est.)",year:"2027",free:true,
+ what:"Enter 'Shipwright' ship-design + marine-robotics + wave-energy events.",
+ desc:"Asia's largest student-run tech fest; Ocean Engineering dept active, NIOT Chennai adjacent.",fee:"Most events FREE",url:"https://www.shaastra.org",
+ deadlines:[{t:"Register",d:"2026-12-01",txt:"Registration opens ~Dec 2026"}],est:true},
+{id:"techfest27",name:"Techfest 2026-27 — IIT Bombay (marine tracks)",org:"IIT Bombay",type:"fest",region:"india",flag:"🇮🇳",country:"India",city:"IIT Bombay, Mumbai",start:"2026-12-26",end:"2026-12-28",dateText:"Dec 2026 - Jan 2027 (est.)",year:"2026",free:true,
+ what:"Enter AUV/ROV underwater-drone challenges & Navy-partnered ship-design problems.",
+ desc:"Asia's largest sci-tech festival with maritime & ocean-robotics competitions.",fee:"Competitions FREE",url:"https://techfest.org",
+ deadlines:[{t:"Register",d:"2026-10-15",txt:"Competition registration ~Oct-Nov 2026"}],est:true},
+{id:"kshitij27",name:"Kshitij 2027 — IIT Kharagpur",org:"IIT Kharagpur",type:"fest",region:"india",flag:"🇮🇳",country:"India",city:"IIT Kharagpur",start:"2027-01-16",end:"2027-01-18",dateText:"~16-18 Jan 2027 (est.)",year:"2027",free:true,
+ what:"Enter marine-engineering & robotics challenges.",
+ desc:"Techno-management fest with hands-on marine and robotics events.",fee:"Free / nominal",url:"https://ktj.in",deadlines:[],est:true},
+{id:"anchorage26",name:"Anchorage 2026 — CUSAT Naval Architecture Fest",org:"SNAS CUSAT",type:"fest",region:"india",flag:"🇮🇳",country:"India",city:"CUSAT, Kochi",start:"2026-10-15",end:"2026-10-17",dateText:"~Oct 2026 (est.)",year:"2026",free:true,
+ what:"Enter ship design, model making & paper presentations.",
+ desc:"Student-led shipbuilding & naval-architecture fest. Low barrier, good early wins.",fee:"Free / nominal",url:"https://www.instagram.com/snascusat",
+ deadlines:[{t:"Register",d:"2026-09-01",txt:"Registration ~Aug-Sep 2026"}],est:true},
+{id:"copedec27",name:"PIANC-COPEDEC XI — Coastal & Port Engineering",org:"PIANC · IIT Madras Ocean Engg Dept",type:"conference",region:"india",flag:"🇮🇳",country:"India",city:"IIT Madras, Chennai",start:"2027-02-21",end:"2027-02-27",dateText:"21-27 Feb 2027",year:"2027",tier:1,free:false,
+ what:"Present a paper on coastal / port / ocean structures.",
+ desc:"11th Int'l Conf on Coastal & Port Engineering in Developing Countries — a major international conference hosted in India: cheap to attend, prestigious to present at.",fee:"Student concessions",url:"https://doe.iitm.ac.in",
+ deadlines:[{t:"Abstract",d:"2026-09-15",txt:"Abstract ~Aug-Sep 2026 — prepare now"},{t:"Paper",d:"2026-11-30",txt:"Full paper ~Nov 2026 (est.)"}],est:true},
+{id:"icsot27",name:"ICSOT-India 2027 — Ships & Offshore Structures",org:"RINA + IIT Kharagpur",type:"conference",region:"india",flag:"🇮🇳",country:"India",city:"IIT Kharagpur",start:"2027-12-10",end:"2027-12-12",dateText:"~Dec 2027 (est.)",year:"2027",tier:1,free:false,
+ what:"Present a paper (internationally indexed proceedings).",
+ desc:"Biennial RINA + IIT KGP conference — one of India's most prestigious NAOE conferences. Your first international citation can happen here.",fee:"~₹3,000-5,000 student",url:"https://www.iitkgp.ac.in",
+ deadlines:[{t:"Abstract",d:"2027-07-31",txt:"Abstract ~Jun-Aug 2027 (est.)"}],est:true},
+{id:"icsoe27",name:"ICSOE 2027 — Sustainable Ocean Engineering (AMET)",org:"AMET University · RINA collaboration",type:"conference",region:"india",flag:"🇮🇳",country:"India",city:"AMET University, Chennai",start:null,end:null,dateText:"2027 · TBC",year:"2027",free:false,
+ what:"Present a student-track paper.",
+ desc:"An established India maritime conference with a student paper track — a good stepping stone before international submissions.",fee:"~₹2,000-4,000 student",url:"https://icsoe.in",
+ deadlines:[{t:"Abstract",txt:"~May-Jun 2027 (est.) — ronyjs@ametuniv.ac.in"}],est:true},
+{id:"inaindia",name:"INA India — Annual Conference & Marine Technology Award",org:"Institution of Naval Architects India",type:"conference",region:"india",flag:"🇮🇳",country:"India",city:"Rotating city + online",start:null,end:null,dateText:"Conf ~Sep-Nov · monthly webinars",year:"2026",free:true,rolling:true,
+ what:"Present a paper (Marine Technology Award) + join free webinars.",
+ desc:"India's own naval-architects body. The most affordable way to start building your India NA network.",fee:"Very low student membership · webinars FREE",url:"https://inaindia.co.in",
+ deadlines:[{t:"Abstract",txt:"Papers ~Jun each year — inaindia.co.in"}]},
+
+/* ══ GCC / MIDDLE EAST (student-participable) ══ */
+{id:"gotech26",name:"SPE GOTECH 2026 — University Student Experience + Paper Contest",org:"Society of Petroleum Engineers",type:"conference",region:"gcc",flag:"🇦🇪",country:"UAE",city:"Dubai World Trade Centre",start:"2026-09-29",end:"2026-10-01",dateText:"29 Sep - 1 Oct 2026",year:"2026",free:true,
+ what:"Join the SPE Student Experience & enter the Middle East Student Paper Contest.",
+ desc:"Selected students attend alongside industry leaders; the Middle East Student Paper Contest is hosted here. Offshore/marine papers eligible.",fee:"Student programme — apply via SPE",url:"https://www.spe-events.org/gotech",
+ deadlines:[{t:"Apply",d:"2026-08-15",txt:"Student Experience application ~mid-2026"}],est:true},
+{id:"adipec26",name:"ADIPEC 2026 — Young ADIPEC & University Connect",org:"dmg events / ADNOC · SPE technical conf.",type:"conference",region:"gcc",flag:"🇦🇪",country:"UAE",city:"ADNEC, Abu Dhabi",start:"2026-11-02",end:"2026-11-05",dateText:"2-5 Nov 2026",year:"2026",tier:1,free:true,
+ what:"Present research in University Connect / Innovation Zone; enter the student paper track.",
+ desc:"World's largest energy event, with a genuine student platform: Young ADIPEC (1,600+ students), University Connect research showcase, and a student technical paper competition — plus the internship pipeline into ADNOC/Baker Hughes. THE strategic GCC event for you.",fee:"Young ADIPEC & student passes FREE (early reg)",url:"https://www.adipec.com",
+ deadlines:[{t:"Register",d:"2026-09-15",txt:"Young ADIPEC / University Connect — register early"}],ver:true},
+{id:"spepaper27",name:"SPE Middle East Student Paper Contest 2027",org:"SPE (at GOTECH 2027)",type:"competition",region:"gcc",flag:"🇦🇪",country:"UAE",city:"Dubai",start:null,end:null,dateText:"~Apr 2027 at GOTECH",year:"2027",free:true,
+ what:"Present a technical paper (UG / MSc / PhD levels).",
+ desc:"Regional qualifier of SPE's international student paper competition. Winners advance to SPE ATCE. Offshore & marine engineering papers eligible.",fee:"FREE for SPE student members",url:"https://www.spe.org/en/students/schedule/",
+ deadlines:[{t:"Abstract",d:"2027-02-08",txt:"Abstract ~Feb 2027 (2026 cycle: 8 Feb)"}],est:true},
+{id:"meos27",name:"MEOS GEO 2027 — Middle East Oil, Gas & Geosciences (student papers)",org:"SPE",type:"conference",region:"gcc",flag:"🇧🇭",country:"Bahrain",city:"Manama",start:"2027-03-06",end:"2027-03-08",dateText:"~6-8 Mar 2027 (verify)",year:"2027",free:false,
+ what:"Present a student paper via the SPE student-chapter pathway.",
+ desc:"Offshore & marine engineering sessions. Bahrain is accessible and approachable for Indian maritime students.",fee:"SPE student rates",url:"https://www.meos-geo.com",
+ deadlines:[{t:"Abstract",d:"2026-09-30",txt:"Student papers via SPE (est. window)"}],est:true},
+{id:"materovsa27",name:"MATE ROV — Saudi Arabia Regional 2027",org:"MATE / KAUST",type:"competition",region:"gcc",flag:"🇸🇦",country:"Saudi Arabia",city:"KAUST, Thuwal",start:null,end:null,dateText:"~Apr 2027 (est.)",year:"2027",free:false,
+ what:"Compete with an ROV at the GCC regional (qualifier for Worlds).",
+ desc:"The Gulf regional of the world's premier underwater-robotics competition, hosted at KAUST.",fee:"$250-450 per team",url:"https://materovcompetition.org/register-regionals/saudiarabia-regional",
+ deadlines:[{t:"Register",d:"2026-12-01",txt:"2027 team registration ~Dec 2026"}],est:true},
+{id:"otcarabia",name:"OTC Arabia / KOGS / KOMEX — Gulf offshore student papers",org:"SPE regional",type:"conference",region:"gcc",flag:"🇸🇦",country:"Gulf (rotating)",city:"Dammam / Kuwait City",start:null,end:null,dateText:"Watch for 2027-28 editions",year:"2027",free:false,rolling:true,
+ what:"Present an offshore-structures paper — lower acceptance barrier than ADIPEC.",
+ desc:"Regional Gulf offshore conferences (OTC Arabia Dammam, Kuwait Oil & Gas Show, KOMEX). A strong undergrad offshore-structures paper has a real chance here.",fee:"SPE student rates",url:"https://www.spe.org",
+ deadlines:[{t:"Watch",txt:"spe.org events — editions announced ~9 months out"}]},
+
+/* ══ GLOBAL CONFERENCES (student present) ══ */
+{id:"gnaoe26",name:"G-NAOE 2026 — Global Conf. on Naval Architecture & Ocean Engineering",org:"SNAK + ABS",type:"conference",region:"americas",flag:"🇺🇸",country:"USA",city:"Houston, TX",start:"2026-10-20",end:"2026-10-24",dateText:"20-24 Oct 2026",year:"2026",tier:1,free:false,
+ what:"Present a paper (student travel grants available).",
+ desc:"Top-tier global NAOE conference with the Ocean CTO Forum (Hyundai, Samsung Heavy, Hanwha execs). AI, decarbonisation, autonomous ships. Abstract deadline 15 Aug — write now.",fee:"Student travel grants available",url:"https://gnaoe.org",
+ deadlines:[{t:"Abstract",d:"2026-08-15",txt:"Abstract + early reg — 15 Aug 2026"}],est:true},
+{id:"imdc27",name:"IMDC 2027 — 16th Int'l Marine Design Conference at MIT",org:"IMDC / MIT",type:"conference",region:"americas",flag:"🇺🇸",country:"USA",city:"MIT, Cambridge MA",start:"2027-06-20",end:"2027-06-24",dateText:"20-24 Jun 2027",year:"2027",tier:1,free:false,
+ what:"Submit an abstract now (window closes 1 Oct 2026), then present at MIT.",
+ desc:"The world's most prestigious marine-design conference — at MIT this cycle. Ship-design methodology, systems engineering, concept design. This window will not come back.",fee:"~$350 student",url:"https://imdc2027.mit.edu",
+ deadlines:[{t:"Abstract",d:"2026-10-01",txt:"Abstract window OPEN — closes 1 Oct 2026 ⚡"},{t:"Paper",d:"2027-02-15",txt:"Full paper ~Feb 2027"}],est:true},
+{id:"isope27",name:"ISOPE 2027 — 37th Int'l Ocean & Polar Engineering Conference",org:"ISOPE",type:"conference",region:"asia",flag:"🇯🇵",country:"Japan",city:"Osaka / Fukuoka (TBC)",start:"2027-06-13",end:"2027-06-18",dateText:"Jun 2027 (venue TBC)",year:"2027",tier:1,free:false,
+ what:"Co-author & present a paper (Scopus & Web of Science indexed).",
+ desc:"Flagship ocean/offshore/polar engineering conference. Get your HOD on the abstract before 30 Oct 2026.",fee:"~$350 student",url:"https://www.isope.org",
+ deadlines:[{t:"Abstract",d:"2026-10-30",txt:"Abstract deadline 30 Oct 2026 ⚡"},{t:"Paper",d:"2027-01-31",txt:"Full paper ~Jan 2027"}],ver:true},
+{id:"omae27",name:"ASME OMAE 2027 — 46th Ocean, Offshore & Arctic Engineering",org:"ASME",type:"conference",region:"europe",flag:"🇳🇱",country:"Netherlands",city:"The Hague",start:"2027-06-13",end:"2027-06-18",dateText:"13-18 Jun 2027",year:"2027",tier:1,free:false,
+ what:"Present a paper (Scopus/EI indexed; ASME travel grants).",
+ desc:"THE gold-standard ocean-engineering conference — 900+ peer-reviewed papers. Presenting as an undergrad is exceptional.",fee:"~$400 student · ASME member $25/yr",url:"https://event.asme.org/OMAE",
+ deadlines:[{t:"Abstract",d:"2026-10-20",txt:"Abstract ~Oct 2026 (2026 cycle: 20 Oct)"},{t:"Paper",d:"2026-12-01",txt:"Draft paper ~Dec 2026"}],ver:true},
+{id:"smc26",name:"SMC 2026 — SNAME Maritime Convention + Lisnyk Awards",org:"SNAME",type:"conference",region:"americas",flag:"🇺🇸",country:"USA",city:"Royal Sonesta, Houston TX",start:"2026-10-28",end:"2026-10-30",dateText:"28-30 Oct 2026",year:"2026",free:false,
+ what:"Present a paper or enter the on-site design-build challenge (build a model in 1.75 hrs).",
+ desc:"SNAME's flagship — Lisnyk awards, student design-build challenge, paper sessions, career fair with Gibbs & Cox, Leidos, ABS.",fee:"~$150-200 student",url:"https://sname.org/sname-maritime-convention-2026",
+ deadlines:[],ver:true},
+{id:"smc27",name:"SMC 2027 — SNAME Maritime Convention + Lisnyk 2027 Awards",org:"SNAME",type:"conference",region:"americas",flag:"🇺🇸",country:"USA",city:"USA (TBC)",start:null,end:null,dateText:"Oct-Nov 2027 · TBC",year:"2027",free:false,
+ what:"Submit an abstract (~Apr 2027) for a SNAME-proceedings paper.",
+ desc:"Annual flagship — paper awards, design-build challenge, Lisnyk 2027 ceremony.",fee:"~$150 student",url:"https://sname.org",
+ deadlines:[{t:"Abstract",d:"2027-04-15",txt:"Abstract ~Apr 2027 (est.)"}],est:true},
+{id:"iamu27",name:"IAMU AGA27 — Annual General Assembly 2027",org:"Int'l Association of Maritime Universities",type:"conference",region:"global",flag:"🌐",country:"Rotating host",city:"TBC",start:"2027-10-15",end:"2027-10-16",dateText:"~Oct 2027 · TBC",year:"2027",tier:1,free:false,
+ what:"Present a student paper — IMU holds a full institutional seat here.",
+ desc:"Your #1 conference target as an IMU student. Student papers are actively encouraged. Start a paper by early 2027 and ask your HOD about sponsorship.",fee:"Seek IMU institutional sponsorship",url:"https://iamu-edu.org",
+ deadlines:[{t:"Abstract",d:"2027-04-15",txt:"Abstract ~Apr 2027 (est.)"},{t:"Paper",d:"2027-07-15",txt:"Full paper ~Jul 2027 (est.)"}],est:true},
+{id:"iamu26",name:"IAMU AGA26 — Annual General Assembly 2026",org:"IAMU",type:"conference",region:"europe",flag:"🇭🇷",country:"Croatia",city:"Split",start:"2026-10-08",end:"2026-10-09",dateText:"8-9 Oct 2026",year:"2026",free:false,
+ what:"Attend/observe via IMU's institutional seat (paper deadlines passed).",
+ desc:"'Human-centred Digital Oceans.' IAMU governs IMU directly — high-value networking even as an observer this year; use it to prep for AGA27.",fee:"Seek IMU institutional sponsorship",url:"https://iamu-edu.org",
+ deadlines:[],est:true},
+{id:"batumi26",name:"Batumi Maritime Scientific Conference 2026 (hybrid)",org:"BNTU Georgia · IAMU-affiliated",type:"conference",region:"europe",flag:"🇬🇪",country:"Georgia",city:"Batumi + online",start:"2026-10-29",end:"2026-10-30",dateText:"29-30 Oct 2026",year:"2026",free:true,
+ what:"Present a paper remotely from Vizag (hybrid) at near-zero cost.",
+ desc:"IAMU-affiliated, low competition — an ideal first international paper you can deliver online.",fee:"Very affordable · online option",url:"https://bntu.edu.ge",
+ deadlines:[{t:"Abstract",d:"2026-08-31",txt:"Abstract ~Aug 2026 (est.)"}],est:true},
+{id:"iccas26",name:"ICCAS 2026 — Computer Applications in Shipbuilding",org:"RINA",type:"conference",region:"europe",flag:"🇪🇺",country:"Europe (TBC)",city:"Venue TBC",start:"2026-09-14",end:"2026-09-16",dateText:"~14-16 Sep 2026 (est.)",year:"2026",free:true,
+ what:"Attend FREE as a RINA student member (digital-shipbuilding, AI, digital twin).",
+ desc:"The flagship digital ship-design conference. Free seats for RINA student members are limited — book early.",fee:"FREE for RINA student members",url:"https://rina.org.uk",
+ deadlines:[{t:"Register",d:"2026-08-31",txt:"Book RINA student seat early — limited"}],est:true},
+{id:"inec26",name:"INEC / iSCSS 2026 — Int'l Naval Engineering Conference",org:"IMarEST",type:"conference",region:"europe",flag:"🇬🇧",country:"UK",city:"Edinburgh",start:"2026-11-10",end:"2026-11-12",dateText:"10-12 Nov 2026",year:"2026",free:false,
+ what:"Present a paper (naval power systems, autonomy, green transition).",
+ desc:"18th edition, 300+ delegates from 25+ countries. IFEP power systems, autonomous naval systems.",fee:"IMarEST student discount (~£200 est.)",url:"https://www.imarest.org",
+ deadlines:[],est:true},
+{id:"oceans26",name:"OCEANS 2026 Monterey",org:"IEEE / MTS",type:"conference",region:"americas",flag:"🇺🇸",country:"USA",city:"Monterey, CA",start:"2026-09-21",end:"2026-09-24",dateText:"21-24 Sep 2026",year:"2026",free:false,
+ what:"Enter the student poster competition (IEEE OES travel grants).",
+ desc:"Premier ocean-engineering conference — AUVs, sensing, acoustics, offshore systems.",fee:"~$200 student (IEEE/MTS member)",url:"https://oceansconference.org",
+ deadlines:[],est:true},
+{id:"ieeeoceans27",name:"IEEE OCEANS 2027 (two editions/yr)",org:"IEEE OES / MTS",type:"conference",region:"global",flag:"🌐",country:"Rotating",city:"Rotating",start:null,end:null,dateText:"Annual · abstracts ~Mar-Apr",year:"2027",free:false,rolling:true,
+ what:"Submit a paper/poster (student poster competition + travel grants).",
+ desc:"Premier IEEE ocean-engineering series — AUVs, sensing, marine acoustics. $15/yr student membership.",fee:"~$200 student member",url:"https://ieeeoes.org",
+ deadlines:[{t:"Abstract",txt:"~Mar-Apr 2027 for the autumn edition"}]},
+{id:"technoocean26",name:"Techno-Ocean 2026",org:"Techno-Ocean Network / Kobe",type:"conference",region:"asia",flag:"🇯🇵",country:"Japan",city:"Kobe",start:"2026-10-14",end:"2026-10-16",dateText:"Oct 2026 · TBC",year:"2026",free:false,
+ what:"Present a paper (AUV/ROV, ocean sensing, deep-sea tech).",
+ desc:"Biennial ocean & underwater technology conference; strong JAMSTEC presence. Very affordable for Japan.",fee:"~¥20,000 (~$130) student",url:"https://www.techno-ocean.com",
+ deadlines:[],est:true},
+{id:"naome26",name:"NAOME 2026 — Naval Architecture, Ocean & Marine Engineering",org:"Guangzhou Maritime University",type:"conference",region:"asia",flag:"🇨🇳",country:"China",city:"Guangzhou",start:"2026-09-18",end:"2026-09-20",dateText:"18-20 Sep 2026",year:"2026",free:false,
+ what:"Present a paper (Scopus/EI indexed) — late full-paper route may be open.",
+ desc:"A conference that exactly matches your degree name — a realistic first indexed publication.",fee:"~$250-350 student",url:"https://icnaome.org",
+ deadlines:[{t:"Paper",d:"2026-08-20",txt:"Alt. full-paper deadline 20 Aug 2026"},{t:"Register",d:"2026-07-16",txt:"Author registration 16 Jul 2026"}],est:true},
+{id:"prads27",name:"PRADS 2027 — Practical Design of Ships & Floating Structures",org:"PRADS Int'l Committee",type:"conference",region:"global",flag:"🌐",country:"Rotating",city:"TBC",start:null,end:null,dateText:"2027 · TBC",year:"2027",free:false,
+ what:"Submit a strong structural/ship-design paper (elite triennial).",
+ desc:"A top-tier ship-design & floating-structures conference. Worth targeting if you develop a serious paper.",fee:"Student reduced rate",url:"https://rina.org.uk",
+ deadlines:[{t:"Watch",txt:"Venue & abstract dates TBC — RINA/SNAME channels"}],est:true},
+{id:"wmu",name:"WMU Maritime Research Conferences",org:"World Maritime University (IMO)",type:"conference",region:"europe",flag:"🇸🇪",country:"Sweden",city:"Malmö",start:null,end:null,dateText:"Rolling programme",year:"2027",free:false,rolling:true,
+ what:"Present a policy/administration-angle paper.",
+ desc:"IMO's own university. Prestigious for classification-society or maritime-administration careers; your IMO link gives you a story here.",fee:"Student rates",url:"https://www.wmu.se",
+ deadlines:[{t:"Watch",txt:"wmu.se/research — calls ~3 months before events"}]},
+{id:"rinaconf",name:"RINA Technical Conferences (rolling, 20+/yr)",org:"RINA",type:"conference",region:"global",flag:"🌐",country:"UK + hybrid",city:"London + online",start:null,end:null,dateText:"Rolling — many hybrid/online",year:"2026",free:false,rolling:true,
+ what:"Present a student paper — many events are online.",
+ desc:"Warship design, ship stability, propulsion & emissions, wind-assist, autonomy. The cheapest route to an indexed international paper.",fee:"Low for student members",url:"https://rina.org.uk/events",
+ deadlines:[{t:"Watch",txt:"rina.org.uk/events — rolling calls"}]},
+{id:"imhfc26",name:"IMHFC 2026 — Int'l Maritime Human Factors Conference",org:"Istanbul Technical University · IAMU-affiliated",type:"conference",region:"europe",flag:"🇹🇷",country:"Türkiye",city:"ITU, Istanbul",start:"2026-09-03",end:"2026-09-05",dateText:"3-5 Sep 2026",year:"2026",free:false,
+ what:"Present a paper on autonomous ships / digital bridge / human factors.",
+ desc:"IAMU-affiliated, so IMU institutional support may apply.",fee:"Student fees — check ITU site",url:"https://www.itu.edu.tr",
+ deadlines:[],est:true},
+{id:"iamu28",name:"IAMU AGA28 — Annual General Assembly 2028",org:"IAMU",type:"conference",region:"global",flag:"🌐",country:"Rotating host",city:"TBC",start:null,end:null,dateText:"~Oct 2028 · TBC",year:"2028",free:false,
+ what:"Present your final-year project paper (with AGA27 experience behind you).",
+ desc:"Your final-year IAMU shot as an undergraduate.",fee:"Seek IMU sponsorship",url:"https://iamu-edu.org",
+ deadlines:[{t:"Abstract",txt:"~Feb-Apr 2028 (est.)"}],est:true},
+
+/* ══════════ ALL-ENGINEERING — HACKATHONS (software/AI, robotics, any field) ══════════ */
+{id:"sih27",name:"Smart India Hackathon 2027",org:"MoE Innovation Cell / AICTE",type:"hackathon",region:"india",flag:"🇮🇳",country:"India",city:"Nodal centres nationwide",start:"2027-12-01",end:"2027-12-15",dateText:"Grand finale ~Dec 2027",year:"2027",free:true,field:"any",tier:1,
+ what:"Team of 6 solves a ministry/PSU problem statement (software or hardware edition).",
+ desc:"India's largest hackathon — hundreds of problem statements from every ministry incl. Navy, ISRO, DRDO, Jal Shakti, Railways, shipyards. Every branch has tracks.",fee:"FREE · prizes ~₹1 lakh/problem",url:"https://sih.gov.in",
+ deadlines:[{t:"Register",d:"2027-08-15",txt:"College registration ~Aug 2027 (est.)"}],est:true},
+{id:"nasaspaceapps27",name:"NASA Space Apps Challenge 2027",org:"NASA + global partners",type:"hackathon",region:"global",flag:"🌐",country:"Global + India nodes",city:"Worldwide 48-hr + online",start:"2027-10-02",end:"2027-10-04",dateText:"~early Oct 2027 (annual)",year:"2027",free:true,field:"any",tier:1,
+ what:"48-hour hackathon on real NASA open-data problems; local hosts in many Indian cities.",
+ desc:"World's largest hackathon — 50,000+ across hundreds of cities. Space, earth-science, data-viz, AI, robotics tracks; global-nominee recognition.",fee:"FREE",url:"https://www.spaceappschallenge.org",
+ deadlines:[{t:"Register",d:"2027-09-20",txt:"Local-event registration ~Sep 2027 (est.)"}],est:true},
+{id:"mlh2627",name:"MLH — Major League Hacking (season circuit)",org:"Major League Hacking",type:"hackathon",region:"global",flag:"🌐",country:"Global + online",city:"100+ member events",start:null,end:null,dateText:"Rolling — events every weekend, Aug→May",year:"2027",free:true,field:"software",rolling:true,tier:1,
+ what:"Pick ANY member hackathon (in-person or online) from the live calendar and register.",
+ desc:"The umbrella for the global student-hackathon circuit — 100,000+ hackers, hundreds of events a season, most free with travel aid for some. This is where most of the 'long tail' lives.",fee:"FREE (most)",url:"https://mlh.io/seasons/2027/events",
+ deadlines:[{t:"Browse",txt:"Live event list — mlh.io/seasons"}]},
+{id:"devpost",name:"Devpost — Online Hackathon Platform",org:"Devpost",type:"hackathon",region:"global",flag:"🌐",country:"Online",city:"Online",start:null,end:null,dateText:"Rolling — thousands listed",year:"2027",free:true,field:"software",rolling:true,
+ what:"Browse & enter online hackathons (AI, web3, cloud, climate, fintech) worldwide.",
+ desc:"The biggest catalogue of online hackathons — company-sponsored (AWS, Google, etc.) with real cash prizes, open to students globally. Filter by theme/eligibility.",fee:"FREE",url:"https://devpost.com/hackathons",
+ deadlines:[{t:"Browse",txt:"New hackathons added daily"}]},
+{id:"unstop",name:"Unstop — India Competitions & Hackathons Platform",org:"Unstop",type:"hackathon",region:"india",flag:"🇮🇳",country:"India",city:"Online + campuses",start:null,end:null,dateText:"Rolling — hundreds live",year:"2027",free:true,field:"any",rolling:true,
+ what:"Browse & enter corporate + campus hackathons, case comps and challenges.",
+ desc:"India's largest competition aggregator — Flipkart, Amazon, TATA, L&T and more run their student hackathons here. Set domain alerts.",fee:"FREE (most)",url:"https://unstop.com/hackathons",
+ deadlines:[{t:"Browse",txt:"New listings daily — set alerts"}]},
+{id:"devfolio",name:"Devfolio — India Hackathon Platform (+ ETHIndia)",org:"Devfolio",type:"hackathon",region:"india",flag:"🇮🇳",country:"India",city:"Online + campuses",start:null,end:null,dateText:"Rolling — incl. ETHIndia (~Dec)",year:"2027",free:true,field:"software",rolling:true,
+ what:"Enter campus & web3 hackathons; ETHIndia is Asia's largest web3 hackathon (~Dec).",
+ desc:"Where most Indian college hackathons are hosted. ETHIndia (Bengaluru, ~December) is the flagship — big prize pools, open to students.",fee:"FREE",url:"https://devfolio.co/hackathons",
+ deadlines:[{t:"Browse",txt:"ETHIndia opens ~Oct each year"}]},
+{id:"hackerearth",name:"HackerEarth — Hackathons & Challenges",org:"HackerEarth",type:"hackathon",region:"global",flag:"🌐",country:"Online + India",city:"Online",start:null,end:null,dateText:"Rolling",year:"2027",free:true,field:"software",rolling:true,
+ what:"Enter sponsored online hackathons & coding challenges; many hire from results.",
+ desc:"Company hackathons (incl. many India MNCs) + monthly coding challenges. Good for AI/ML and backend.",fee:"FREE",url:"https://www.hackerearth.com/challenges/",
+ deadlines:[{t:"Browse",txt:"New challenges weekly"}]},
+{id:"ethglobal27",name:"ETHGlobal 2027 — Web3 Hackathon Series",org:"ETHGlobal",type:"hackathon",region:"global",flag:"🌐",country:"Global + online",city:"Rotating + online",start:null,end:null,dateText:"Rolling — several/yr + online",year:"2027",free:true,field:"software",rolling:true,
+ what:"Enter online or in-person web3/blockchain hackathons; large prize pools.",
+ desc:"The premier blockchain hackathon series — frequent events, student-friendly, travel stipends for some.",fee:"FREE",url:"https://ethglobal.com/events",
+ deadlines:[{t:"Browse",txt:"New events announced regularly"}]},
+{id:"flipkartgrid",name:"Flipkart GRiD 7.0 — Engineering Campus Challenge",org:"Flipkart",type:"hackathon",region:"india",flag:"🇮🇳",country:"India",city:"Online + finals",start:"2027-01-15",end:null,dateText:"~opens early 2027 (annual)",year:"2027",free:true,field:"software",tier:1,
+ what:"Multi-round challenge — Software Development, Robotics (hardware) & Analytics tracks.",
+ desc:"One of India's most prestigious corporate campus challenges — PPIs/internships for top teams. Open to engineering UG/PG.",fee:"FREE",url:"https://unstop.com/competitions/flipkart-grid",
+ deadlines:[{t:"Watch",txt:"GRiD opens ~Jan–Mar — register on Unstop"}],est:true},
+{id:"amazonml",name:"Amazon ML Challenge / Amazon HackOn 2027",org:"Amazon India",type:"hackathon",region:"india",flag:"🇮🇳",country:"India",city:"Online + finals",start:null,end:null,dateText:"Annual · ~mid/late 2027",year:"2027",free:true,field:"software",
+ what:"Build an ML model on a real Amazon dataset (ML Challenge) or a product hack (HackOn).",
+ desc:"High-visibility ML/SDE hackathons with internships/PPIs. Open to engineering students across India.",fee:"FREE",url:"https://unstop.com/hackathons",
+ deadlines:[{t:"Watch",txt:"Announced on Unstop/Amazon — set an alert"}],est:true},
+{id:"imaginecup27",name:"Microsoft Imagine Cup 2027",org:"Microsoft",type:"hackathon",region:"global",flag:"🌐",country:"Global",city:"Online → World Championship",start:null,end:null,dateText:"Entries ~late 2026; finals ~May 2027",year:"2027",free:true,field:"software",tier:1,
+ what:"Build a startup-style tech project (AI/cloud); pitch through rounds to the world final.",
+ desc:"Microsoft's flagship student tech competition — mentorship, Azure credits, big cash + the World Championship.",fee:"FREE",url:"https://imaginecup.microsoft.com",
+ deadlines:[{t:"Register",txt:"Entries open ~Nov 2026 onward"}],est:true},
+{id:"gsc27",name:"Google Solution Challenge 2027 (GDG on Campus)",org:"Google Developer Groups",type:"hackathon",region:"global",flag:"🌐",country:"Global",city:"Online",start:null,end:null,dateText:"~Jan–Mar 2027 (annual)",year:"2027",free:true,field:"software",
+ what:"Build a solution to a UN SDG using Google tech; top 100 → top 10 demo day.",
+ desc:"Global student challenge run via campus GDG chapters. Strong for app/AI builders.",fee:"FREE",url:"https://developers.google.com/community/gdsc-solution-challenge",
+ deadlines:[{t:"Submit",d:"2027-03-31",txt:"Submissions ~Mar 2027 (est.)"}],est:true},
+{id:"hackthenorth27",name:"Hack the North 2027",org:"University of Waterloo",type:"hackathon",region:"americas",flag:"🇨🇦",country:"Canada",city:"Waterloo, ON",start:"2027-09-17",end:"2027-09-19",dateText:"~Sep 2027 (annual)",year:"2027",free:true,field:"software",
+ what:"Apply to Canada's largest hackathon; travel reimbursement for some international hackers.",
+ desc:"Flagship 36-hour hackathon with strong recruiting. Open to students worldwide incl. India.",fee:"FREE (travel aid for some)",url:"https://hackthenorth.com",
+ deadlines:[{t:"Apply",d:"2027-07-15",txt:"Applications ~summer 2027 (est.)"}],est:true},
+{id:"treehacks27",name:"TreeHacks 2027 — Stanford",org:"Stanford University",type:"hackathon",region:"americas",flag:"🇺🇸",country:"USA",city:"Stanford, CA",start:"2027-02-12",end:"2027-02-14",dateText:"~Feb 2027 (annual)",year:"2027",free:true,field:"software",
+ what:"Apply to Stanford's 36-hour hackathon — health, AI, fintech, hardware tracks.",
+ desc:"One of the most competitive US university hackathons; international students welcome.",fee:"FREE (travel aid for some)",url:"https://www.treehacks.com",
+ deadlines:[{t:"Apply",txt:"Applications ~Dec 2026–Jan 2027"}],est:true},
+{id:"hackmit27",name:"HackMIT 2027 + PennApps 2027",org:"MIT / UPenn",type:"hackathon",region:"americas",flag:"🇺🇸",country:"USA",city:"Cambridge & Philadelphia",start:"2027-09-18",end:"2027-09-20",dateText:"~Sep 2027 (annual)",year:"2027",free:true,field:"software",
+ what:"Apply to either marquee US collegiate hackathon (both ~September).",
+ desc:"Two of the biggest US university hackathons — elite recruiting and prizes. Open internationally.",fee:"FREE",url:"https://hackmit.org",
+ deadlines:[{t:"Apply",txt:"Applications ~Jul–Aug 2027"}],est:true},
+{id:"calhacks27",name:"Cal Hacks 2027 — UC Berkeley",org:"UC Berkeley",type:"hackathon",region:"americas",flag:"🇺🇸",country:"USA",city:"Berkeley, CA",start:"2027-10-22",end:"2027-10-24",dateText:"~Oct 2027 (annual)",year:"2027",free:true,field:"software",
+ what:"Apply to one of the world's largest collegiate hackathons.",
+ desc:"Huge AI/hardware hackathon with major sponsors; international students eligible.",fee:"FREE",url:"https://www.calhacks.io",
+ deadlines:[{t:"Apply",txt:"Applications ~Sep 2027"}],est:true},
+{id:"jpmccfg27",name:"JPMorgan Code for Good 2027",org:"JPMorgan Chase",type:"hackathon",region:"global",flag:"🌐",country:"India + global",city:"Multiple cities",start:null,end:null,dateText:"Annual · ~2027",year:"2027",free:true,field:"software",
+ what:"Overnight hackathon building tech for nonprofits; invite → strong internship pipeline.",
+ desc:"Run in India (several campuses) and globally — a direct route to JPMC software internships.",fee:"FREE",url:"https://www.jpmorganchase.com/careers/explore-opportunities/students/programs",
+ deadlines:[{t:"Apply",txt:"Applications open ~early–mid 2027"}],est:true},
+{id:"walmart27",name:"Walmart Sparkathon 2027",org:"Walmart Global Tech India",type:"hackathon",region:"india",flag:"🇮🇳",country:"India",city:"Online + finals",start:null,end:null,dateText:"Annual · ~2027",year:"2027",free:true,field:"software",
+ what:"Retail-tech product/ML hackathon; PPIs for winners.",
+ desc:"Popular India campus hackathon on Unstop — e-commerce, supply-chain, AI themes.",fee:"FREE",url:"https://unstop.com/hackathons",
+ deadlines:[{t:"Watch",txt:"On Unstop — set an alert"}],est:true},
+{id:"amexcc27",name:"American Express Campus Challenge / Makeathon 2027",org:"American Express India",type:"hackathon",region:"india",flag:"🇮🇳",country:"India",city:"Online + finals",start:null,end:null,dateText:"Annual · ~2027",year:"2027",free:true,field:"software",
+ what:"Fintech/analytics challenge; PPIs & cash for top teams.",
+ desc:"Well-known India corporate challenge for engineering + analytics students.",fee:"FREE",url:"https://unstop.com/competitions",
+ deadlines:[{t:"Watch",txt:"On Unstop — set an alert"}],est:true},
+{id:"ieeextreme",name:"IEEEXtreme 18.0 (2026) / 19.0 (2027) — 24-hr Programming",org:"IEEE",type:"hackathon",region:"global",flag:"🌐",country:"Global (online)",city:"Online, 24 hours",start:"2026-10-24",end:"2026-10-24",dateText:"~late Oct annually",year:"2026",free:true,field:"software",
+ what:"24-hour global team programming competition (needs IEEE student membership).",
+ desc:"One of the world's biggest timed coding contests — prestige + prizes. Recurs each October.",fee:"IEEE student membership",url:"https://ieeextreme.org",
+ deadlines:[{t:"Register",d:"2026-10-20",txt:"Register before the October contest"}],est:true},
+{id:"csawctf",name:"CSAW CTF 2026/2027 — Student Cybersecurity",org:"NYU + global regions",type:"hackathon",region:"global",flag:"🌐",country:"Online → regional finals",city:"Online + India (IIT-K) site",start:"2026-11-06",end:"2026-11-08",dateText:"Quals ~Nov annually",year:"2026",free:true,field:"cyber",
+ what:"Capture-the-flag security competition; qualify online → India regional final.",
+ desc:"The world's largest student cybersecurity event; IIT Kanpur hosts the India region.",fee:"FREE",url:"https://www.csaw.io",
+ deadlines:[{t:"Register",txt:"Quals registration ~Oct each year"}],est:true},
+{id:"picoctf27",name:"picoCTF 2027 — Beginner Cybersecurity CTF",org:"Carnegie Mellon University",type:"hackathon",region:"global",flag:"🌐",country:"Online",city:"Online",start:"2027-03-01",end:"2027-03-15",dateText:"~Mar 2027 (annual)",year:"2027",free:true,field:"cyber",
+ what:"Beginner-friendly CTF — a great first cybersecurity competition.",
+ desc:"CMU's famous intro CTF; learn + compete, open globally.",fee:"FREE",url:"https://picoctf.org",
+ deadlines:[{t:"Watch",txt:"Opens ~March 2027"}],est:true},
+
+/* ══════════ ALL-ENGINEERING — DESIGN / BUILD / ROBOTICS / DOMAIN ══════════ */
+{id:"formulabharat27",name:"Formula Bharat 2027",org:"Formula Bharat",type:"competition",region:"india",flag:"🇮🇳",country:"India",city:"Kari Motor Speedway, Coimbatore",start:"2027-01-20",end:"2027-01-24",dateText:"~Jan 2027 (annual)",year:"2027",free:false,field:"mechanical",tier:1,
+ what:"Design, build & race a formula-style car as a university team (FSAE ruleset).",
+ desc:"India's premier Formula Student competition — design, cost & business events + a dynamic track. Combustion & EV classes.",fee:"Team registration + build",url:"https://www.formulabharat.com",
+ deadlines:[{t:"Register",txt:"Team registration ~mid-2026 for Jan 2027"}],est:true},
+{id:"fsae27",name:"Formula Student 2027 — FS-UK / FSG / FSAE",org:"IMechE / FSG / SAE",type:"competition",region:"europe",flag:"🇪🇺",country:"UK / Germany / USA",city:"Silverstone · Hockenheim · Michigan",start:"2027-07-15",end:"2027-08-20",dateText:"~Jul–Aug 2027",year:"2027",free:false,field:"mechanical",
+ what:"Race your FSAE car at a global Formula Student event (many Indian teams travel).",
+ desc:"The world circuit of Formula Student — FS-UK (Jul), Formula Student Germany (Aug), FSAE Michigan (May). Design-build-race at the highest level.",fee:"Team registration + travel",url:"https://www.imeche.org/events/formula-student",
+ deadlines:[{t:"Register",txt:"Team entry windows open ~late 2026"}],est:true},
+{id:"baja_supra27",name:"BAJA SAEINDIA & SUPRA SAEINDIA 2027",org:"SAEINDIA",type:"competition",region:"india",flag:"🇮🇳",country:"India",city:"Pithampur / Chennai etc.",start:"2027-01-25",end:"2027-01-29",dateText:"BAJA ~Jan; SUPRA ~Jul 2027",year:"2027",free:false,field:"mechanical",
+ what:"Design & build an off-road ATV (BAJA) or a formula car (SUPRA) and compete.",
+ desc:"India's largest automotive student competitions — huge participation, strong auto-industry recruiting.",fee:"Team registration",url:"https://www.saeindia.org",
+ deadlines:[{t:"Register",txt:"Virtuals ~mid-2026; finals early/mid 2027"}],est:true},
+{id:"shelleco27",name:"Shell Eco-marathon 2027 (Asia / India)",org:"Shell",type:"competition",region:"asia",flag:"🌏",country:"Asia-Pacific",city:"Regional circuit",start:null,end:null,dateText:"~2027 (annual)",year:"2027",free:true,field:"mechanical",
+ what:"Build the most energy-efficient vehicle and run it on track (Mileage/Concept classes).",
+ desc:"Global energy-efficiency competition; strong sustainability + powertrain focus. Indian teams compete in the Asia round.",fee:"FREE to compete (build costs)",url:"https://www.shellecomarathon.com",
+ deadlines:[{t:"Register",txt:"Team applications open ~late 2026"}],est:true},
+{id:"irec27",name:"Spaceport America Cup / IREC 2027",org:"ESRA",type:"competition",region:"americas",flag:"🇺🇸",country:"USA",city:"Spaceport America, New Mexico",start:"2027-06-15",end:"2027-06-19",dateText:"~Jun 2027 (annual)",year:"2027",free:false,field:"aerospace",tier:1,
+ what:"Design, build & launch a sounding rocket to 10k/30k ft + submit a tech report.",
+ desc:"The world's largest intercollegiate rocket-engineering competition — Indian teams compete. Deep aerospace + propulsion.",fee:"Team entry + travel",url:"https://www.soundingrocket.org",
+ deadlines:[{t:"Register",txt:"Team entry ~late 2026 for Jun 2027"}],est:true},
+{id:"cansat27",name:"CanSat Competition 2027 (+ CanSat India)",org:"AAS / AIAA",type:"competition",region:"americas",flag:"🇺🇸",country:"USA + India",city:"USA field + India rounds",start:"2027-06-10",end:"2027-06-13",dateText:"~Jun 2027 (annual)",year:"2027",free:false,field:"aerospace",
+ what:"Build a can-sized satellite payload, deploy it from a rocket, hit mission objectives.",
+ desc:"Flagship student space-systems competition; India has its own CanSat rounds too.",fee:"Team registration",url:"https://www.cansatcompetition.com",
+ deadlines:[{t:"Register",d:"2026-11-30",txt:"Team registration ~late 2026"}],est:true},
+{id:"eyantra",name:"e-Yantra Robotics Competition 2026-27",org:"IIT Bombay (MoE-funded)",type:"competition",region:"india",flag:"🇮🇳",country:"India",city:"Online → IIT Bombay finals",start:null,end:null,dateText:"Starts ~Sep; finals ~Mar 2027",year:"2027",free:true,field:"robotics",tier:1,
+ what:"Solve themed robotics/embedded tasks online; top teams build at IIT Bombay.",
+ desc:"Govt-funded national robotics competition — free, beginner-to-advanced, with training provided.",fee:"FREE",url:"https://www.e-yantra.org",
+ deadlines:[{t:"Register",txt:"Registration ~Aug–Sep each year"}],est:true},
+{id:"robocon27",name:"DD Robocon India 2027 (→ ABU Robocon)",org:"Doordarshan / MIT-Pune / ABU",type:"competition",region:"india",flag:"🇮🇳",country:"India → host nation",city:"Pune finals",start:"2027-03-01",end:null,dateText:"India finals ~Mar 2027",year:"2027",free:true,field:"robotics",
+ what:"Build competition robots to the year's theme; India winner represents at ABU Robocon.",
+ desc:"The premier national robotics contest; the winner goes to the Asia-Pacific ABU Robocon.",fee:"Team registration",url:"https://ddrobocon.in",
+ deadlines:[{t:"Register",txt:"Team registration ~Oct–Nov 2026"}],est:true},
+{id:"robomaster27",name:"DJI RoboMaster 2027",org:"DJI",type:"competition",region:"asia",flag:"🇨🇳",country:"China (global teams)",city:"Shenzhen",start:"2027-07-01",end:null,dateText:"~Summer 2027",year:"2027",free:false,field:"robotics",
+ what:"Build robotics-arena robots as a university team.",
+ desc:"Spectacular robotics mega-competition; heavy EE/ME/CS integration. International teams compete.",fee:"Team entry + travel",url:"https://www.robomaster.com",
+ deadlines:[{t:"Watch",txt:"Season registration ~late 2026"}],est:true},
+{id:"asce27",name:"ASCE Student Competitions 2027 (Concrete Canoe / Steel Bridge)",org:"ASCE",type:"competition",region:"americas",flag:"🇺🇸",country:"USA (global student chapters)",city:"Regional → nationals",start:"2027-04-01",end:null,dateText:"Regionals ~spring 2027",year:"2027",free:false,field:"civil",
+ what:"Design & build a concrete canoe or a steel bridge; compete on performance.",
+ desc:"The signature civil-engineering student competitions; chapters worldwide.",fee:"Chapter/team fee",url:"https://www.asce.org/communities/student-members/competitions",
+ deadlines:[{t:"Watch",txt:"Via your ASCE student chapter"}],est:true},
+{id:"chemecar27",name:"AIChE Chem-E-Car 2027",org:"AIChE",type:"competition",region:"americas",flag:"🇺🇸",country:"USA + regional (incl. India)",city:"Regional → annual meeting",start:null,end:null,dateText:"Regionals ~spring; finals ~Nov 2027",year:"2027",free:false,field:"chemical",
+ what:"Build a shoebox-sized car powered & stopped by a chemical reaction; hit a target distance.",
+ desc:"The flagship chemical-engineering student competition; regional editions in India too.",fee:"Team registration",url:"https://www.aiche.org/community/students/chem-e-car",
+ deadlines:[{t:"Watch",txt:"Via AIChE student chapter"}],est:true},
+{id:"igem27",name:"iGEM 2027 — Synthetic Biology",org:"iGEM Foundation",type:"competition",region:"global",flag:"🌐",country:"Global → Grand Jamboree",city:"Paris (Jamboree)",start:"2027-10-01",end:null,dateText:"Project season; Jamboree ~Oct/Nov 2027",year:"2027",free:false,field:"chemical",
+ what:"Build a synthetic-biology project as a team; present at the Grand Jamboree.",
+ desc:"World's biggest synbio competition — for bio/chem/bioengineering-minded teams.",fee:"Team registration (significant)",url:"https://competition.igem.org",
+ deadlines:[{t:"Register",txt:"Team registration ~early 2027"}],est:true},
+{id:"ti_iicdc27",name:"Texas Instruments Innovation Challenge 2027",org:"Texas Instruments India",type:"competition",region:"india",flag:"🇮🇳",country:"India",city:"Online + finals",start:null,end:null,dateText:"Annual · ~2027",year:"2027",free:true,field:"electrical",
+ what:"Build an electronics/embedded product prototype using TI technology.",
+ desc:"Marquee India electronics-design challenge (India Innovation Challenge Design Contest lineage) — hardware/EE focus, incubation support.",fee:"FREE",url:"https://www.ti.com/ww/en/student-contests/index.html",
+ deadlines:[{t:"Watch",txt:"Announced ~mid-2027"}],est:true},
+{id:"solardecathlon27",name:"Solar Decathlon 2027 (US DOE)",org:"US Dept of Energy / NREL",type:"competition",region:"americas",flag:"🇺🇸",country:"USA (Design Challenge global)",city:"Online + NREL finals",start:null,end:null,dateText:"Design Challenge ~Apr 2027",year:"2027",free:true,field:"civil",
+ what:"Design a high-performance zero-energy building (Design Challenge is open globally).",
+ desc:"Crossover of civil/architecture/energy/mechanical; the Design Challenge is enterable from India.",fee:"FREE",url:"https://www.solardecathlon.gov",
+ deadlines:[{t:"Register",txt:"Design Challenge registration ~late 2026"}],est:true},
+
+/* ══════════ ALL-ENGINEERING — CODING CONTESTS, AWARDS & INNOVATION ══════════ */
+{id:"icpc27",name:"ICPC Asia 2026-27 — Collegiate Programming Contest",org:"ICPC Foundation",type:"competition",region:"global",flag:"🌐",country:"India regionals → Worlds",city:"Regional sites + World Finals",start:null,end:null,dateText:"Regionals ~Nov–Dec; Worlds 2027",year:"2027",free:false,field:"software",
+ what:"Team of 3 solves algorithmic problems; win a regional → World Finals.",
+ desc:"The most prestigious collegiate programming contest. India has Amritapuri/Chennai/Kanpur regionals.",fee:"Nominal team fee",url:"https://icpc.global",
+ deadlines:[{t:"Register",txt:"Regional registration ~Sep–Oct each year"}],est:true},
+{id:"codevita27",name:"TCS CodeVita 2026-27",org:"Tata Consultancy Services",type:"competition",region:"global",flag:"🌐",country:"Global (online) → finals",city:"Online",start:null,end:null,dateText:"Annual season · ~2027",year:"2027",free:true,field:"software",
+ what:"Multi-round individual programming contest; winners get prizes + TCS interview fast-track.",
+ desc:"One of the world's largest coding contests, open to engineering students worldwide.",fee:"FREE",url:"https://www.tcsapps.com/codevita",
+ deadlines:[{t:"Watch",txt:"Registration opens on the TCS CodeVita site"}],est:true},
+{id:"hultprize27",name:"Hult Prize 2026-27 — Student Social Enterprise",org:"Hult Prize Foundation",type:"competition",region:"global",flag:"🌐",country:"Global (OnCampus → Global)",city:"Campus → regional → global",start:null,end:null,dateText:"OnCampus now–early 2027; Global summer 2027",year:"2027",free:true,field:"any",tier:1,
+ what:"Build a social-impact startup to the year's challenge; pitch for US$1,000,000.",
+ desc:"The world's biggest student social-enterprise competition — any discipline, huge prize + accelerator.",fee:"FREE",url:"https://www.hultprize.org",
+ deadlines:[{t:"OnCampus",txt:"Run/join your campus round this academic year"}],est:true},
+{id:"gyti27",name:"Gandhian Young Technological Innovation (GYTI) Awards 2027",org:"SRISTI / BIRAC",type:"award",region:"india",flag:"🇮🇳",country:"India",city:"Online submission",start:null,end:null,dateText:"Annual · submissions ~early 2027",year:"2027",free:true,field:"any",
+ what:"Submit your final-year / B.Tech technical project for national recognition + grants.",
+ desc:"Honours the most promising student engineering projects across India — any discipline.",fee:"FREE",url:"https://www.gyti.techpedia.in",
+ deadlines:[{t:"Submit",txt:"Submission window ~Jan–Mar 2027"}],est:true},
+{id:"redbull27",name:"Red Bull Basement 2027 — Student Innovation",org:"Red Bull",type:"competition",region:"global",flag:"🌐",country:"India + global",city:"Online → national → global",start:null,end:null,dateText:"Annual · ~late 2027",year:"2027",free:true,field:"any",
+ what:"Pitch a student tech idea (AI-assisted); win mentorship & a global-final trip.",
+ desc:"Low-barrier student innovation competition, any field, strong in India.",fee:"FREE",url:"https://www.redbull.com/int-en/projects/red-bull-basement",
+ deadlines:[{t:"Watch",txt:"Opens ~Sep–Oct each year"}],est:true}
+];
+
+/* Featured priority order (dashboard) — highest payoff, most open to a student */
+const FEATURED=["sih27","nasaspaceapps27","flipkartgrid","hultprize27","mlh2627","formulabharat27","imaginecup27","irec27","eyantra","bah27","swavlamban","lisnyk27","imoessay26","adipec26","imdc27"];
+
+/* ═══════════ CORE ═══════════ */
+const KEY="helm.naval.v1";
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const today=new Date(); today.setHours(0,0,0,0);
+const MS=86400000;
+const P=d=>{if(!d)return null;const[y,m,dd]=d.split("-").map(Number);return new Date(y,m-1,dd)};
+const days=d=>Math.ceil((P(d)-today)/MS);
+const fmt=d=>P(d).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});
+const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
+const REG={gcc:"🇦🇪 GCC / Middle East",india:"🇮🇳 India",europe:"🇪🇺 Europe",americas:"🌎 Americas",asia:"🌏 Asia-Pacific",global:"🌐 Global / Online"};
+const TYPE={competition:"🏆 Competition",hackathon:"💻 Hackathon",conference:"🎓 Conference",fest:"🎉 Student Fest",award:"🏅 Award / Scholarship"};
+const TYPESHORT={competition:"Competition",hackathon:"Hackathon",conference:"Conference",fest:"Student Fest",award:"Award"};
+const FIELD={software:"💻 Software / AI / Data",robotics:"🤖 Robotics / Embedded",mechanical:"⚙️ Mechanical / Automotive",aerospace:"🚀 Aerospace / Space",civil:"🏗️ Civil / Structural",electrical:"⚡ Electrical / Electronics",chemical:"⚗️ Chemical / Energy",marine:"⚓ Marine / Offshore",cyber:"🔒 Cybersecurity",any:"🌐 Any / Interdisciplinary"};
+const fieldOf=e=>e.field||"marine";
+const STATUSES=["interested","preparing","submitted","accepted","attended","skipped"];
+const STLBL={interested:"Interested",preparing:"Preparing",submitted:"Submitted",accepted:"Accepted 🎉",attended:"Attended",skipped:"Skipped"};
+
+const isPast=e=>{const end=e.end||e.start;return end?P(end)<today:false};
+const isLive=e=>{if(!e.start)return false;return P(e.start)<=today&&today<=P(e.end||e.start)};
+
+let S;try{S=JSON.parse(localStorage.getItem(KEY))||{}}catch(_){S={}}
+S.st=S.st||{};S.notes=S.notes||{};S.custom=S.custom||[];S.feedEvents=S.feedEvents||[];
+/* merge any events pulled earlier from an update feed (persist offline) */
+if(S.feedEvents.length){const _have=new Set(EVENTS.map(e=>e.id));for(const e of S.feedEvents){if(e&&e.id&&!_have.has(e.id)){EVENTS.push(e);_have.add(e.id);}}}
+const save=()=>{localStorage.setItem(KEY,JSON.stringify(S));refreshBadges()};
+const trackedIds=()=>[...new Set([...Object.keys(S.st),...Object.keys(S.notes)])].filter(id=>S.st[id]||S.notes[id]);
+
+const F={q:"",type:"all",field:"all",region:"all",year:"all",free:false,past:false,group:"date"};
+
+/* ── render helpers ── */
+function cdownHtml(e){
+  if(isLive(e))return '<span class="cdown cd-live">● LIVE NOW</span>';
+  if(!e.start)return '<span class="cdown cd-tbc">'+(e.rolling?"rolling":"TBC")+'</span>';
+  const d=days(e.start);
+  if(d<0)return '<span class="cdown cd-tbc">ended</span>';
+  return `<span class="cdown ${d<=21?"cd-soon":d<=75?"cd-mid":"cd-far"}">in ${d}d</span>`;
+}
+function dlPill(d){
+  if(!d.d)return '<span class="cdown cd-tbc">watch</span>';
+  const n=days(d.d);
+  if(n<0)return '<span class="cdown cd-tbc">passed</span>';
+  return `<span class="cdown ${n<=21?"cd-soon":n<=60?"cd-mid":"cd-far"}">${n}d left</span>`;
+}
+function cardHtml(e){
+  const st=S.st[e.id]||"", note=S.notes[e.id]||"";
+  const dls=(e.deadlines||[]).map(d=>{
+    const passed=d.d&&days(d.d)<0;
+    return `<div class="dl-line${passed?" passed":""}"><span class="k">${d.t}</span><span class="txt">${d.txt}</span>${dlPill(d)}</div>`;
+  }).join("");
+  const vb=e.ver?'<span class="vb ver">✓ verified</span>':'<span class="vb est">est. — confirm</span>';
+  return `<div class="ecard${st?" tracked":""}${isPast(e)?" past":""}" id="card-${e.id}">
+    <div class="ec-top">
+      ${st?`<span class="st-pill stp-${st}">${STLBL[st]}</span>`:""}
+      <span class="tb t-${e.type}">${TYPESHORT[e.type]}</span>
+      <span class="rb">${e.flag} ${e.country}</span>${vb}
+    </div>
+    <div class="ec-name">${e.name}</div>
+    <div class="ec-org">${e.org}</div>
+    <div class="ec-when"><span class="dt">${e.dateText}</span>${cdownHtml(e)}<span>· ${e.city}</span></div>
+    ${e.what?`<div class="ec-what"><b>You:</b> ${e.what}</div>`:""}
+    <div class="ec-desc">${e.desc}</div>
+    ${dls?`<div class="ec-dls">${dls}</div>`:""}
+    <div class="ec-fee">💰 ${e.fee}</div>
+    <div class="ec-foot">
+      <a class="ec-link" href="${e.url}" target="_blank" rel="noopener">↗ ${e.url.replace(/^https?:\/\/(www\.)?/,"").split("/")[0]}</a>
+      <div class="trk">
+        <select class="st-sel${st?" has":""}" data-id="${e.id}">
+          <option value="">＋ Track…</option>
+          ${STATUSES.map(s=>`<option value="${s}"${st===s?" selected":""}>${STLBL[s]}</option>`).join("")}
+        </select>
+        <button class="note-btn${note?" has":""}" data-id="${e.id}">✎ note</button>
+      </div>
+    </div>
+    <textarea class="note-area" data-id="${e.id}" placeholder="Private note — team, target deadline, ideas…">${note}</textarea>
+  </div>`;
+}
+function bindCards(root){
+  root.querySelectorAll(".st-sel").forEach(sel=>sel.addEventListener("change",()=>{
+    const id=sel.dataset.id;
+    if(sel.value)S.st[id]=sel.value;else delete S.st[id];
+    save();rerender();
+  }));
+  root.querySelectorAll(".note-btn").forEach(b=>b.addEventListener("click",()=>{
+    const ta=root.querySelector(`.note-area[data-id="${b.dataset.id}"]`);
+    ta.classList.toggle("open");if(ta.classList.contains("open"))ta.focus();
+  }));
+  root.querySelectorAll(".note-area").forEach(ta=>ta.addEventListener("input",()=>{
+    const id=ta.dataset.id;
+    if(ta.value.trim())S.notes[id]=ta.value;else delete S.notes[id];
+    save();
+  }));
+}
+
+/* ── sorting / grouping ── */
+function sortByDate(list){
+  return list.slice().sort((a,b)=>{
+    if(a.start&&b.start)return P(a.start)-P(b.start);
+    if(a.start)return -1;if(b.start)return 1;
+    return (a.year||"9999").localeCompare(b.year||"9999")||a.name.localeCompare(b.name);
+  });
+}
+
+/* ── ALL EVENTS ── */
+function filtered(){
+  return EVENTS.filter(e=>{
+    if(!F.past&&isPast(e))return false;
+    if(F.type!=="all"&&e.type!==F.type)return false;
+    if(F.field!=="all"&&fieldOf(e)!==F.field)return false;
+    if(F.region!=="all"&&e.region!==F.region)return false;
+    if(F.year!=="all"&&e.year!==F.year)return false;
+    if(F.free&&!e.free)return false;
+    if(F.q){
+      const hay=[e.name,e.org,e.city,e.country,e.desc,e.what,e.fee,e.dateText,(e.deadlines||[]).map(d=>d.txt).join(" ")].join(" ").toLowerCase();
+      if(!hay.includes(F.q))return false;
+    }
+    return true;
+  });
+}
+function groupKey(e){
+  switch(F.group){
+    case"region":return REG[e.region];
+    case"year":return e.year||"TBC";
+    case"type":return TYPE[e.type];
+    case"field":return FIELD[fieldOf(e)];
+    case"month":return e.start?MONTHS[P(e.start).getMonth()]+" "+P(e.start).getFullYear():"📌 Date TBC / Rolling";
+    default:return null;
+  }
+}
+function renderAll(){
+  const list=sortByDate(filtered()), grid=$("#egrid");
+  $("#countLine").innerHTML=`Showing <b>${list.length}</b> of <b>${EVENTS.length}</b> events · past events ${F.past?"included":"auto-hidden"} · today: ${today.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}`;
+  if(!list.length){grid.innerHTML='<div class="no-results">Nothing matches — loosen a filter or clear the search.</div>';return}
+  if(F.group==="date"){grid.innerHTML=list.map(cardHtml).join("")}
+  else{
+    let keys=[],buckets={};
+    if(F.group==="region")keys=Object.values(REG);
+    else if(F.group==="type")keys=Object.values(TYPE);
+    else if(F.group==="year")keys=["2026","2027","2028","TBC"];
+    else if(F.group==="field")keys=Object.values(FIELD);
+    list.forEach(e=>{const k=groupKey(e);(buckets[k]=buckets[k]||[]).push(e);if(!keys.includes(k))keys.push(k)});
+    if(F.group==="month"){
+      keys=Object.keys(buckets).sort((a,b)=>{
+        if(a.startsWith("📌"))return 1;if(b.startsWith("📌"))return -1;
+        const[ma,ya]=a.split(" "),[mb,yb]=b.split(" ");
+        return (ya-yb)||(MONTHS.indexOf(ma)-MONTHS.indexOf(mb));
+      });
+    }
+    grid.innerHTML=keys.filter(k=>buckets[k]&&buckets[k].length).map(k=>
+      `<div class="gh"><span class="t">${k}</span><span class="c">${buckets[k].length} event${buckets[k].length>1?"s":""}</span></div>`+
+      buckets[k].map(cardHtml).join("")).join("");
+  }
+  bindCards(grid);
+}
+
+/* ── COMPETITIONS tab ── */
+function renderComp(){
+  const list=sortByDate(EVENTS.filter(e=>!isPast(e)&&(e.type==="competition"||e.type==="award")));
+  list.sort((a,b)=>((b.tier?1:0)-(a.tier?1:0)));
+  const grid=$("#compGrid");
+  grid.innerHTML=list.map(cardHtml).join("");
+  bindCards(grid);
+}
+
+/* ── HACKATHONS tab ── */
+function soonestDl(e){
+  const ds=(e.deadlines||[]).map(d=>d.d?days(d.d):null).filter(n=>typeof n==="number"&&n>=0);
+  if(e.start&&days(e.start)>=0)ds.push(days(e.start));
+  return ds.length?Math.min(...ds):99999;
+}
+function renderHack(){
+  const list=EVENTS.filter(e=>!isPast(e)&&e.type==="hackathon").sort((a,b)=>soonestDl(a)-soonestDl(b));
+  const grid=$("#hackGrid");
+  grid.innerHTML=list.length?list.map(cardHtml).join(""):'<div class="no-results">No hackathons loaded.</div>';
+  bindCards(grid);
+}
+
+/* ── INDIA & DEFENCE tab ── */
+function renderIndia(){
+  const def=sortByDate(EVENTS.filter(e=>!isPast(e)&&e.defence));
+  const fests=sortByDate(EVENTS.filter(e=>!isPast(e)&&e.region==="india"&&!e.defence));
+  $("#defGrid").innerHTML=def.map(cardHtml).join("");
+  $("#indiaFestGrid").innerHTML=fests.map(cardHtml).join("");
+  bindCards($("#defGrid"));bindCards($("#indiaFestGrid"));
+}
+
+/* ── DASHBOARD ── */
+function allDeadlines(){
+  const out=[];
+  EVENTS.forEach(e=>(e.deadlines||[]).forEach(d=>{if(d.d)out.push({e,d,n:days(d.d)})}));
+  return out.sort((a,b)=>a.n-b.n);
+}
+function renderDash(){
+  const upc=allDeadlines().filter(x=>x.n>=0&&x.n<=120).slice(0,10);
+  $("#dashUrgent").innerHTML=upc.length?upc.map(x=>`
+    <div class="urg-row" data-goto="${x.e.id}">
+      <div class="urg-days ${x.n<=21?"cd-soon":x.n<=60?"cd-mid":"cd-far"}">${x.n===0?"TODAY":"in "+x.n+"d"}</div>
+      <div class="urg-body"><div class="urg-name">${x.e.name}</div><div class="urg-det">${x.d.t}: ${x.d.txt} · ${fmt(x.d.d)}</div></div>
+      <span class="rb">${x.e.flag}</span>
+    </div>`).join(""):'<div class="empty-note">No dated deadlines in the next 120 days — check rolling ones on the Deadlines tab.</div>';
+  $("#dashFeat").innerHTML=FEATURED.map((id,i)=>{
+    const e=EVENTS.find(v=>v.id===id);if(!e||isPast(e))return"";
+    return `<div class="feat-card" data-goto="${e.id}"><div class="feat-rank">${String(i+1).padStart(2,"0")}</div>
+      <div style="flex:1"><div class="urg-name">${e.name}</div><div class="urg-det">${e.flag} ${e.city} · ${e.dateText}</div></div>${cdownHtml(e)}</div>`;
+  }).join("");
+  const regs={};EVENTS.filter(e=>!isPast(e)).forEach(e=>regs[e.region]=(regs[e.region]||0)+1);
+  const max=Math.max(...Object.values(regs));
+  $("#dashRegions").innerHTML=Object.entries(regs).sort((a,b)=>b[1]-a[1]).map(([r,n])=>`
+    <div class="reg-bar"><span class="rl">${REG[r]}</span><div class="track"><div class="fill" style="width:${n/max*100}%"></div></div><span class="rn">${n}</span></div>`).join("");
+  $$("[data-goto]").forEach(el=>el.addEventListener("click",()=>gotoEvent(el.dataset.goto)));
+}
+function gotoEvent(id){
+  switchView("all");
+  F.type="all";F.region="all";F.year="all";F.free=false;F.past=false;F.q="";$("#q").value="";
+  syncChips();renderAll();
+  setTimeout(()=>{const c=$("#card-"+id);if(c){c.scrollIntoView({behavior:"smooth",block:"center"});c.style.boxShadow="0 0 0 2px var(--gold)";setTimeout(()=>c.style.boxShadow="",1800)}},70);
+}
+
+/* ── TIMELINE ── */
+function renderTimeline(){
+  const list=sortByDate(EVENTS.filter(e=>!isPast(e))),buckets={},order=[];
+  list.forEach(e=>{
+    const k=e.start?MONTHS[P(e.start).getMonth()]+" "+P(e.start).getFullYear():"📌 Date TBC / Rolling";
+    if(!buckets[k]){buckets[k]=[];order.push(k)}buckets[k].push(e);
+  });
+  $("#tlGrid").innerHTML=order.map(k=>`
+    <div class="mcard"><div class="mhead"><span class="mname">${k}</span><span class="mcount">${buckets[k].length}</span></div>
+    <div>${buckets[k].map(e=>`
+      <div class="mrow" data-goto2="${e.id}">
+        <span class="mdate">${e.start?String(P(e.start).getDate()).padStart(2,"0")+" "+MONTHS[P(e.start).getMonth()].slice(0,3):"—"}</span>
+        <div><div class="mi-name">${e.name}</div><div class="mi-loc">${e.flag} ${e.city} · ${TYPESHORT[e.type]}</div></div>
+      </div>`).join("")}</div></div>`).join("");
+  $$("[data-goto2]").forEach(el=>el.addEventListener("click",()=>gotoEvent(el.dataset.goto2)));
+}
+
+/* ── DEADLINES ── */
+let dlShowPast=false;
+function renderDeadlines(){
+  const list=allDeadlines().filter(x=>dlShowPast||x.n>=0);
+  $("#dlPastToggle").classList.toggle("on",dlShowPast);
+  $("#dlPastToggle").textContent=dlShowPast?"Hide passed deadlines":"Show passed deadlines";
+  $("#dlList").innerHTML=list.length?list.map(x=>`
+    <div class="dlv-row ${x.n>=0&&x.n<=14?"r-urgent":x.n>=0&&x.n<=45?"r-soon":""}" data-goto3="${x.e.id}">
+      <div class="dlv-days ${x.n<0?"cd-tbc":x.n<=14?"cd-soon":x.n<=45?"cd-mid":"cd-far"}">${x.n<0?"passed":x.n===0?"TODAY":"in "+x.n+"d"}</div>
+      <div style="flex:1;min-width:200px"><div class="dlv-name">${x.e.name}</div><div class="dlv-det"><b style="color:var(--mu2)">${x.d.t}</b> — ${x.d.txt}</div></div>
+      <span class="dlv-date">${fmt(x.d.d)}</span><span class="rb">${x.e.flag} ${x.e.country}</span>
+    </div>`).join(""):'<div class="empty-note">No upcoming dated deadlines.</div>';
+  $$("[data-goto3]").forEach(el=>el.addEventListener("click",()=>gotoEvent(el.dataset.goto3)));
+}
+
+/* ── CONSOLE ── */
+function renderConsole(){
+  const counts={};STATUSES.forEach(s=>counts[s]=0);
+  Object.values(S.st).forEach(s=>{if(counts[s]!==undefined)counts[s]++});
+  const col={interested:"var(--blue)",preparing:"var(--amber)",submitted:"var(--purple)",accepted:"var(--green)",attended:"var(--teal)",skipped:"var(--mu)"};
+  $("#consStats").innerHTML=STATUSES.map(s=>`<div class="cons-stat"><div class="n" style="color:${col[s]}">${counts[s]}</div><div class="l">${STLBL[s].replace(" 🎉","")}</div></div>`).join("");
+  const cl=$("#customList");
+  const customs=S.custom.slice().sort((a,b)=>(a.date||"9999").localeCompare(b.date||"9999"));
+  cl.innerHTML=customs.length?customs.map(c=>{
+    const n=c.date?days(c.date):null;
+    return `<div class="dlv-row ${n!==null&&n>=0&&n<=7?"r-urgent":""}">
+      <div class="dlv-days ${n===null?"cd-tbc":n<0?"cd-tbc":n<=7?"cd-soon":n<=30?"cd-mid":"cd-far"}">${n===null?"—":n<0?"overdue":n===0?"TODAY":"in "+n+"d"}</div>
+      <div style="flex:1;min-width:180px"><div class="dlv-name">${c.title}</div>${c.note?`<div class="dlv-det">${c.note}</div>`:""}</div>
+      ${c.date?`<span class="dlv-date">${fmt(c.date)}</span>`:""}<button class="del-x" data-del="${c.id}">✕</button>
+    </div>`}).join(""):'<div class="empty-note">No custom reminders yet — add abstract dates, HOD follow-ups, membership renewals…</div>';
+  cl.querySelectorAll("[data-del]").forEach(b=>b.addEventListener("click",()=>{S.custom=S.custom.filter(c=>String(c.id)!==b.dataset.del);save();renderConsole()}));
+  const ids=trackedIds(),evs=sortByDate(EVENTS.filter(e=>ids.includes(e.id))),grid=$("#consGrid");
+  grid.innerHTML=evs.length?evs.map(cardHtml).join(""):'<div class="empty-note" style="grid-column:1/-1">Nothing tracked yet. On any event card, use <b>＋ Track…</b> to set a status — it pins here with countdowns and your notes.</div>';
+  bindCards(grid);
+}
+$("#cdAdd").addEventListener("click",()=>{
+  const t=$("#cdTitle").value.trim();if(!t)return $("#cdTitle").focus();
+  S.custom.push({id:Date.now(),title:t,date:$("#cdDate").value||null,note:$("#cdNote").value.trim()});
+  $("#cdTitle").value="";$("#cdDate").value="";$("#cdNote").value="";save();renderConsole();
+});
+$("#btnExport").addEventListener("click",()=>{
+  const blob=new Blob([JSON.stringify(S,null,2)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="helm-console-backup.json";a.click();URL.revokeObjectURL(a.href);
+});
+$("#btnImport").addEventListener("click",()=>$("#importFile").click());
+$("#importFile").addEventListener("change",ev=>{
+  const f=ev.target.files[0];if(!f)return;const r=new FileReader();
+  r.onload=()=>{try{const d=JSON.parse(r.result);
+    S.st=Object.assign(S.st,d.st||{});S.notes=Object.assign(S.notes,d.notes||{});
+    (d.custom||[]).forEach(c=>{if(!S.custom.some(x=>x.id===c.id))S.custom.push(c)});
+    save();renderConsole();alert("Backup imported ✓");
+  }catch(_){alert("Could not read that file — is it a HELM backup JSON?")}};
+  r.readAsText(f);ev.target.value="";
+});
+$("#btnClear").addEventListener("click",()=>{
+  if(confirm("Delete ALL statuses, notes and custom reminders on this device? Export a backup first if unsure.")){
+    S={st:{},notes:{},custom:[]};save();renderConsole();rerender();
+  }
+});
+
+/* ── NAV ── */
+let currentView="dash";
+function switchView(v){
+  currentView=v;
+  $$(".ntab").forEach(t=>t.classList.toggle("on",t.dataset.v===v));
+  $$(".view").forEach(x=>x.classList.remove("on"));
+  $("#v-"+v).classList.add("on");
+  rerender();
+}
+function rerender(){
+  if(currentView==="dash")renderDash();
+  else if(currentView==="all")renderAll();
+  else if(currentView==="hack")renderHack();
+  else if(currentView==="comp")renderComp();
+  else if(currentView==="india")renderIndia();
+  else if(currentView==="timeline")renderTimeline();
+  else if(currentView==="deadlines")renderDeadlines();
+  else if(currentView==="console")renderConsole();
+  refreshBadges();
+}
+$$(".ntab").forEach(t=>t.addEventListener("click",()=>switchView(t.dataset.v)));
+
+/* ── FILTERS ── */
+function syncChips(){
+  $$(".chip[data-f]").forEach(c=>{
+    const f=c.dataset.f,v=c.dataset.val;
+    if(f==="free")c.classList.toggle("on",F.free);
+    else if(f==="past")c.classList.toggle("on",F.past);
+    else if(f==="group")c.classList.toggle("on",F.group===v);
+    else c.classList.toggle("on",F[f]===v);
+  });
+}
+$$(".chip[data-f]").forEach(c=>c.addEventListener("click",()=>{
+  const f=c.dataset.f,v=c.dataset.val;
+  if(f==="free")F.free=!F.free;else if(f==="past")F.past=!F.past;else F[f]=v;
+  syncChips();renderAll();
+}));
+$("#q").addEventListener("input",()=>{F.q=$("#q").value.toLowerCase().trim();renderAll()});
+$("#dlPastToggle").addEventListener("click",()=>{dlShowPast=!dlShowPast;renderDeadlines()});
+
+/* ── CHECK FOR UPDATES (pull new events from a feed the scheduled hunter writes) ── */
+const DEFAULT_FEED="events_feed.json"; /* same-origin on the hosted site; auto-pulled weekly by the Claude hunt */
+async function pullFeed(manual){
+  const btn=$("#btnCheckUpd");
+  let url=S.feedUrl||DEFAULT_FEED;
+  if(manual&&!S.feedUrl&&location.protocol==="file:"){
+    const u=prompt("This is your local copy — it can't auto-fetch a file. Paste the hosted feed URL (your GitHub Pages events_feed.json link) to pull updates here, or just open the hosted site which updates itself. Leave blank to cancel.");
+    if(!u)return; S.feedUrl=u.trim(); save(); url=S.feedUrl;
+  }
+  const old=btn?btn.textContent:""; if(btn&&manual){btn.textContent="⏳ Checking…";btn.disabled=true;}
+  try{
+    const r=await fetch(url,{cache:"no-store"}); if(!r.ok)throw 0;
+    const d=await r.json();
+    const incoming=Array.isArray(d)?d:(d.events||[]);
+    const have=new Set(EVENTS.map(e=>e.id)); let added=0;
+    for(const e of incoming){if(e&&e.id&&!have.has(e.id)){EVENTS.push(e);S.feedEvents.push(e);have.add(e.id);added++;}}
+    if(d.updated)S.feedUpdated=d.updated;
+    save(); if($("#updLbl")&&S.feedUpdated)$("#updLbl").textContent=S.feedUpdated;
+    initStats(); rerender();
+    if(manual)alert(added?("Added "+added+" new event"+(added>1?"s":"")+" ✓"):"You're up to date — no new events found.");
+  }catch(_){ if(manual)alert("Couldn't read the feed. On the local file this only works with a pasted hosted URL; the hosted site updates on its own from the weekly hunt."); }
+  finally{ if(btn&&manual){btn.textContent=old;btn.disabled=false;} }
+}
+$("#btnCheckUpd").addEventListener("click",()=>pullFeed(true));
+
+/* ── HEADER STATS ── */
+function refreshBadges(){
+  $("#consBadge").textContent=trackedIds().length+(S.custom?S.custom.length:0);
+  $("#stTracked").textContent=trackedIds().length;
+}
+function initStats(){
+  const up=EVENTS.filter(e=>!isPast(e));
+  $("#todayLbl").textContent=today.toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short",year:"numeric"});
+  $("#stUpcoming").textContent=up.length;
+  $("#stDl90").textContent=allDeadlines().filter(x=>x.n>=0&&x.n<=90).length;
+  $("#stComp").textContent=up.filter(e=>e.type==="competition"||e.type==="award").length;
+  $("#stHack").textContent=up.filter(e=>e.type==="hackathon").length;
+  $("#stFree").textContent=up.filter(e=>e.free).length;
+  $("#updLbl").textContent=S.feedUpdated||"12 Oct 2026";
+}
+initStats();refreshBadges();renderDash();pullFeed(false);
+</script>
+</body>
+</html>
