@@ -1498,20 +1498,21 @@ _ael("authLogout",async()=>{if(sb)await sb.auth.signOut();user=null;updateAuthBt
 
 /* ── ACCESS-CODE GATE (replaces account login) ── */
 const CODES={"sreeragmr03":"SREERAG M R","maverick1104":"ARJUN R"};
+let cgUser=null; /* in-memory only, never persisted -> access code required on every entry */
 const CG_WEBHOOK=(localStorage.getItem("cg_webhook")||"").trim(); /* optional: owner's logging endpoint to receive every login */
 function deviceInfo(){const n=navigator;return{when:new Date().toISOString(),ua:n.userAgent,platform:(n.userAgentData&&n.userAgentData.platform)||n.platform||"",lang:n.language||"",tz:(Intl.DateTimeFormat().resolvedOptions().timeZone)||"",screen:screen.width+"x"+screen.height,viewport:innerWidth+"x"+innerHeight,touch:(n.maxTouchPoints||0)>0};}
 function prettyDevice(d){const ua=d.ua||"";let b="Browser";if(/edg/i.test(ua))b="Edge";else if(/opr|opera/i.test(ua))b="Opera";else if(/chrome|crios/i.test(ua))b="Chrome";else if(/firefox|fxios/i.test(ua))b="Firefox";else if(/safari/i.test(ua))b="Safari";let os=d.platform||"";if(/win/i.test(os))os="Windows";else if(/android/i.test(ua))os="Android";else if(/iphone|ipad|ios/i.test(ua))os="iOS";else if(/mac/i.test(os))os="macOS";else if(/linux/i.test(os))os="Linux";return b+(os?" on "+os:"")+(d.touch?" · touch":"")+" · "+d.screen;}
 function cgLog(){try{return JSON.parse(localStorage.getItem("cg_log")||"[]");}catch(_){return[];}}
 function recordLogin(name){const d=deviceInfo();d.user=name;const log=cgLog();log.unshift(d);localStorage.setItem("cg_log",JSON.stringify(log.slice(0,100)));if(CG_WEBHOOK){try{fetch(CG_WEBHOOK,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/json"},body:JSON.stringify(d)});}catch(_){}}return d;}
-function showWho(){const b=$("#btnWho");if(!b)return;const name=localStorage.getItem("cg_user");if(name){b.style.display="inline-flex";b.textContent="👤 "+name;}else b.style.display="none";}
+function showWho(){const b=$("#btnWho");if(!b)return;const name=cgUser;if(name){b.style.display="inline-flex";b.textContent="👤 "+name;}else b.style.display="none";}
 function codeGateInit(){
   showWho();
-  if(localStorage.getItem("cg_user")){document.body.classList.remove("gated");$("#codeGate").style.display="none";return;}
+  if(cgUser){document.body.classList.remove("gated");$("#codeGate").style.display="none";return;}
   document.body.classList.add("gated");$("#codeGate").style.display="flex";
   const i=$("#cgInput");if(i)setTimeout(()=>i.focus(),60);
 }
 function cgUnlock(name){
-  localStorage.setItem("cg_user",name);
+  cgUser=name;
   const d=recordLogin(name);
   document.body.classList.remove("gated");$("#codeGate").style.display="none";showWho();
   const w=$("#cgWelcome");if(w){w.textContent="Welcome, "+name+" · "+prettyDevice(d);w.style.display="block";clearTimeout(window.__cgt);window.__cgt=setTimeout(()=>{w.style.display="none";},6500);}
@@ -1522,7 +1523,7 @@ _ael("cgEnter",cgTry);
 {const i=$("#cgInput");if(i)i.addEventListener("keydown",e=>{if(e.key==="Enter")cgTry();});}
 _ael("btnWho",openAccessLog);
 _ael("cgLogClose",()=>{$("#cgLogModal").style.display="none";});
-_ael("cgLogout",()=>{localStorage.removeItem("cg_user");$("#cgLogModal").style.display="none";codeGateInit();});
+_ael("cgLogout",()=>{cgUser=null;$("#cgLogModal").style.display="none";codeGateInit();});
 
 initStats();refreshBadges();renderDash();pullFeed(false);codeGateInit();
 </script>
