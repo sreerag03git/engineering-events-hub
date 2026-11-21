@@ -6,6 +6,7 @@
 <title>HELM · Engineering Student Events Command Deck — Hackathons, Competitions &amp; More</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <style>
 :root{
   --navy:#0a1628; --navy2:#0e1f3d; --navy3:#132a52;
@@ -215,6 +216,16 @@ h1.brand span{color:var(--gold)}
 
 footer{border-top:1px solid var(--line);padding:24px 30px;text-align:center;font-size:11px;color:var(--mu);line-height:1.9}
 footer b{color:var(--gold2)}
+.auth-modal{display:none;position:fixed;inset:0;z-index:300;background:rgba(5,10,20,.74);backdrop-filter:blur(3px);align-items:center;justify-content:center;padding:16px}
+.auth-card{position:relative;background:var(--navy2);border:1px solid var(--line2);border-radius:16px;padding:22px 20px;width:100%;max-width:360px;display:flex;flex-direction:column;gap:11px}
+.auth-title{font-weight:600;font-size:16px}
+.auth-msg{font-size:11.5px;color:var(--mu2);min-height:14px;line-height:1.5}
+.auth-card input{background:var(--navy);border:1px solid var(--line);border-radius:9px;color:var(--tx);font-size:13px;padding:9px 12px;outline:none}
+.auth-card input:focus{border-color:var(--goldln)}
+.auth-row{display:flex;gap:8px}.auth-row>*{flex:1}
+.auth-x{position:absolute;top:9px;right:12px;background:none;border:none;color:var(--mu);font-size:17px;cursor:pointer}
+.auth-who{font-size:12px;color:var(--mu2);line-height:1.5}
+#authConfig,#authForm,#authAccount{display:none;flex-direction:column;gap:9px}
 @media(max-width:640px){
   html,body{overflow-x:hidden}
   .hero-in{padding:22px 16px 18px}
@@ -255,6 +266,7 @@ footer b{color:var(--gold2)}
     <span class="live-chip"><span class="pulse"></span> Live · <b id="todayLbl"></b></span>
     <span class="live-chip">Data seeded <b id="updLbl">—</b></span>
     <button class="abtn" id="btnCheckUpd" style="padding:5px 13px;font-size:11.5px;border-radius:20px">🔄 Check for updates</button>
+    <button class="abtn" id="btnAuth" style="padding:5px 13px;font-size:11.5px;border-radius:20px">🔐 Sign in / Sync</button>
     <span class="live-chip">Past events auto-hidden · console saved on-device</span>
   </div>
   <div class="stat-band">
@@ -374,6 +386,7 @@ footer b{color:var(--gold2)}
       <button class="chip" data-f="year" data-val="2028">2028</button>
       <span style="width:12px"></span><span class="flab">More</span>
       <button class="chip" data-f="free" data-val="1">💚 Free / funded</button>
+      <button class="chip" data-f="dl" data-val="1">⏰ Open deadline</button>
       <button class="chip" data-f="past" data-val="1">🕰 Include past</button>
     </div>
     <div class="frow"><span class="flab">Group by</span>
@@ -383,6 +396,12 @@ footer b{color:var(--gold2)}
       <button class="chip teal" data-f="group" data-val="region">🌍 Region / Country</button>
       <button class="chip teal" data-f="group" data-val="field">◆ Field</button>
       <button class="chip teal" data-f="group" data-val="type">◆ Type</button>
+    </div>
+    <div class="frow"><span class="flab">Sort</span>
+      <button class="chip on teal" data-f="sort" data-val="date">📅 Date</button>
+      <button class="chip teal" data-f="sort" data-val="deadline">⏰ Soonest deadline</button>
+      <button class="chip teal" data-f="sort" data-val="name">A–Z</button>
+      <button class="chip teal" data-f="sort" data-val="free">💚 Free first</button>
     </div>
   </div>
   <div class="count-line" id="countLine"></div>
@@ -446,6 +465,28 @@ footer b{color:var(--gold2)}
 </div>
 
 </div><!-- /wrap -->
+
+<div id="authModal" class="auth-modal">
+  <div class="auth-card">
+    <button id="authClose" class="auth-x">✕</button>
+    <div class="auth-title">Account &amp; sync</div>
+    <div id="authMsg" class="auth-msg"></div>
+    <div id="authConfig">
+      <input id="cfgUrl" placeholder="Supabase project URL">
+      <input id="cfgKey" placeholder="Supabase anon public key">
+      <button id="authSaveCfg" class="gold-btn">Save &amp; reload</button>
+    </div>
+    <div id="authForm">
+      <input id="authEmail" type="email" placeholder="email" autocomplete="email">
+      <input id="authPass" type="password" placeholder="password (min 6 chars)" autocomplete="current-password">
+      <div class="auth-row"><button id="authLogin" class="gold-btn">Log in</button><button id="authRegister" class="abtn">Register</button></div>
+    </div>
+    <div id="authAccount">
+      <div class="auth-who">Signed in as <b id="authWho"></b> — your console (statuses, notes, reminders) syncs across devices.</div>
+      <button id="authLogout" class="abtn">Log out</button>
+    </div>
+  </div>
+</div>
 
 <footer>
   <b>HELM</b> — Engineering Student Events Command Deck · hackathons · competitions · fests · conferences · awards<br>
@@ -928,10 +969,10 @@ let S;try{S=JSON.parse(localStorage.getItem(KEY))||{}}catch(_){S={}}
 S.st=S.st||{};S.notes=S.notes||{};S.custom=S.custom||[];S.feedEvents=S.feedEvents||[];
 /* merge any events pulled earlier from an update feed (persist offline) */
 if(S.feedEvents.length){const _have=new Set(EVENTS.map(e=>e.id));for(const e of S.feedEvents){if(e&&e.id&&!_have.has(e.id)){EVENTS.push(e);_have.add(e.id);}}}
-const save=()=>{localStorage.setItem(KEY,JSON.stringify(S));refreshBadges()};
+const save=()=>{localStorage.setItem(KEY,JSON.stringify(S));refreshBadges();if(typeof cloudPush==="function")cloudPush();};
 const trackedIds=()=>[...new Set([...Object.keys(S.st),...Object.keys(S.notes)])].filter(id=>S.st[id]||S.notes[id]);
 
-const F={q:"",type:"all",field:"all",region:"all",year:"all",free:false,past:false,group:"date"};
+const F={q:"",type:"all",field:"all",region:"all",year:"all",free:false,past:false,dl:false,group:"date",sort:"date"};
 
 /* ── render helpers ── */
 function cdownHtml(e){
@@ -1015,6 +1056,7 @@ function filtered(){
     if(F.region!=="all"&&e.region!==F.region)return false;
     if(F.year!=="all"&&e.year!==F.year)return false;
     if(F.free&&!e.free)return false;
+    if(F.dl&&!(e.deadlines||[]).some(d=>d.d&&days(d.d)>=0))return false;
     if(F.q){
       const hay=[e.name,e.org,e.city,e.country,e.desc,e.what,e.fee,e.dateText,(e.deadlines||[]).map(d=>d.txt).join(" ")].join(" ").toLowerCase();
       if(!hay.includes(F.q))return false;
@@ -1032,8 +1074,14 @@ function groupKey(e){
     default:return null;
   }
 }
+function applySort(list){
+  if(F.sort==="deadline")return list.slice().sort((a,b)=>soonestDl(a)-soonestDl(b));
+  if(F.sort==="name")return list.slice().sort((a,b)=>a.name.localeCompare(b.name));
+  if(F.sort==="free")return sortByDate(list).sort((a,b)=>(b.free?1:0)-(a.free?1:0));
+  return sortByDate(list);
+}
 function renderAll(){
-  const list=sortByDate(filtered()), grid=$("#egrid");
+  const list=applySort(filtered()), grid=$("#egrid");
   $("#countLine").innerHTML=`Showing <b>${list.length}</b> of <b>${EVENTS.length}</b> events · past events ${F.past?"included":"auto-hidden"} · today: ${today.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}`;
   if(!list.length){grid.innerHTML='<div class="no-results">Nothing matches — loosen a filter or clear the search.</div>';return}
   if(F.group==="date"){grid.innerHTML=list.map(cardHtml).join("")}
@@ -1226,13 +1274,14 @@ function syncChips(){
     const f=c.dataset.f,v=c.dataset.val;
     if(f==="free")c.classList.toggle("on",F.free);
     else if(f==="past")c.classList.toggle("on",F.past);
+    else if(f==="dl")c.classList.toggle("on",F.dl);
     else if(f==="group")c.classList.toggle("on",F.group===v);
     else c.classList.toggle("on",F[f]===v);
   });
 }
 $$(".chip[data-f]").forEach(c=>c.addEventListener("click",()=>{
   const f=c.dataset.f,v=c.dataset.val;
-  if(f==="free")F.free=!F.free;else if(f==="past")F.past=!F.past;else F[f]=v;
+  if(f==="free")F.free=!F.free;else if(f==="past")F.past=!F.past;else if(f==="dl")F.dl=!F.dl;else F[f]=v;
   syncChips();renderAll();
 }));
 $("#q").addEventListener("input",()=>{F.q=$("#q").value.toLowerCase().trim();renderAll()});
@@ -1278,7 +1327,50 @@ function initStats(){
   $("#stFree").textContent=up.filter(e=>e.free).length;
   $("#updLbl").textContent=S.feedUpdated||"12 Oct 2026";
 }
-initStats();refreshBadges();renderDash();pullFeed(false);
+/* ── CLOUD SYNC (Supabase Auth + per-user console row) ── */
+const SB_URL=(localStorage.getItem("sb_url")||"").trim();
+const SB_KEY=(localStorage.getItem("sb_key")||"").trim();
+let sb=null,user=null,pushT=null;
+const cloudConfigured=()=>!!(SB_URL&&SB_KEY&&window.supabase);
+function amsg(t){const m=$("#authMsg");if(m)m.textContent=t||"";}
+function renderAuth(){
+  const cfg=cloudConfigured();
+  $("#authConfig").style.display=cfg?"none":"flex";
+  $("#authForm").style.display=(cfg&&!user)?"flex":"none";
+  $("#authAccount").style.display=user?"flex":"none";
+  if(user)$("#authWho").textContent=user.email||"your account";
+  if(!cfg)amsg("One-time: paste your free Supabase project URL + anon key to turn on accounts. (Ask Claude to bake them in so every device is automatic.)");
+}
+function updateAuthBtn(){const b=$("#btnAuth");if(b)b.textContent=user?("🟢 "+(user.email||"synced")):"🔐 Sign in / Sync";}
+async function cloudPull(){
+  if(!user||!sb)return;
+  try{const {data}=await sb.from("console").select("data").eq("user_id",user.id).maybeSingle();
+    if(data&&data.data){const c=data.data;S.st=c.st||{};S.notes=c.notes||{};S.custom=c.custom||[];localStorage.setItem(KEY,JSON.stringify(S));}
+    else{cloudPush(true);}
+  }catch(_){}
+}
+function cloudPush(now){
+  if(!user||!sb)return; clearTimeout(pushT);
+  const run=()=>sb.from("console").upsert({user_id:user.id,data:{st:S.st,notes:S.notes,custom:S.custom},updated_at:new Date().toISOString()}).then(()=>{},()=>{});
+  if(now)run();else pushT=setTimeout(run,800);
+}
+async function onAuthed(){await cloudPull();refreshBadges();initStats();rerender();updateAuthBtn();renderAuth();}
+function cloudInit(){
+  updateAuthBtn();
+  if(!cloudConfigured())return;
+  try{sb=window.supabase.createClient(SB_URL,SB_KEY);}catch(_){return;}
+  sb.auth.getSession().then(({data})=>{if(data&&data.session){user=data.session.user;onAuthed();}updateAuthBtn();});
+  sb.auth.onAuthStateChange((_e,s)=>{user=s?s.user:null;updateAuthBtn();renderAuth();});
+}
+const _ael=(id,fn)=>{const el=$("#"+id);if(el)el.addEventListener("click",fn);};
+_ael("btnAuth",()=>{$("#authModal").style.display="flex";renderAuth();});
+_ael("authClose",()=>{$("#authModal").style.display="none";});
+_ael("authSaveCfg",()=>{const u=$("#cfgUrl").value.trim(),k=$("#cfgKey").value.trim();if(!u||!k){amsg("Enter both the URL and the anon key.");return;}localStorage.setItem("sb_url",u);localStorage.setItem("sb_key",k);location.reload();});
+_ael("authRegister",async()=>{if(!sb)return;amsg("Creating account…");const {error}=await sb.auth.signUp({email:$("#authEmail").value.trim(),password:$("#authPass").value});amsg(error?error.message:"Account created. If email confirmation is on, confirm via the email link, then log in.");});
+_ael("authLogin",async()=>{if(!sb)return;amsg("Logging in…");const {data,error}=await sb.auth.signInWithPassword({email:$("#authEmail").value.trim(),password:$("#authPass").value});if(error){amsg(error.message);return;}user=data.user;await onAuthed();amsg("Synced ✓");setTimeout(()=>{$("#authModal").style.display="none";},600);});
+_ael("authLogout",async()=>{if(sb)await sb.auth.signOut();user=null;updateAuthBtn();renderAuth();});
+
+initStats();refreshBadges();renderDash();pullFeed(false);cloudInit();
 </script>
 </body>
 </html>
