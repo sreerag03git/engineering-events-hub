@@ -256,6 +256,12 @@ body.gated .navbar,body.gated .wrap{filter:blur(5px);pointer-events:none;user-se
 .auth-x{top:13px;right:14px;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;transition:background .15s,color .15s;z-index:1}
 .auth-x:hover{background:rgba(255,255,255,.07);color:var(--tx)}
 .auth-foot{border-top:1px solid var(--line);padding:12px 20px;font-size:10.5px;color:var(--mu);text-align:center;background:rgba(255,255,255,.015)}
+.cglog{display:flex;flex-direction:column;gap:7px;max-height:300px;overflow:auto}
+.cglog-row{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:9px;padding:8px 11px;font-size:11.5px;color:var(--mu2);display:flex;flex-direction:column;gap:2px}
+.cglog-row b{color:var(--gold2)}
+.cglog-when{font-family:var(--mono);font-size:10px;color:var(--mu)}
+.cg-toast{display:none;position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:320;background:var(--navy3);border:1px solid var(--goldln);color:var(--gold2);font-size:12px;font-weight:600;padding:10px 16px;border-radius:12px;box-shadow:0 12px 30px -10px rgba(0,0,0,.7);max-width:92vw;text-align:center}
+#btnWho{cursor:pointer}
 @media(max-width:640px){
   html,body{overflow-x:hidden}
   .hero-in{padding:22px 16px 18px}
@@ -296,7 +302,7 @@ body.gated .navbar,body.gated .wrap{filter:blur(5px);pointer-events:none;user-se
     <span class="live-chip"><span class="pulse"></span> Live · <b id="todayLbl"></b></span>
     <span class="live-chip">Data seeded <b id="updLbl">—</b></span>
     <button class="abtn" id="btnCheckUpd" style="padding:5px 13px;font-size:11.5px;border-radius:20px">🔄 Check for updates</button>
-    <button class="abtn" id="btnAuth" style="padding:5px 13px;font-size:11.5px;border-radius:20px">🔐 Sign in / Sync</button>
+    <button class="abtn" id="btnWho" style="padding:5px 13px;font-size:11.5px;border-radius:20px;display:none"></button>
     <span class="live-chip">Past events auto-hidden · console saved on-device</span>
   </div>
   <div class="stat-band">
@@ -527,6 +533,33 @@ body.gated .navbar,body.gated .wrap{filter:blur(5px);pointer-events:none;user-se
     <div class="auth-foot">🔒 Secure sign-in via Supabase · this site never stores your password</div>
   </div>
 </div>
+
+<div id="codeGate" class="auth-modal">
+  <div class="auth-card">
+    <div class="auth-inner">
+      <div class="auth-brand">⚓ HELM · SECURE ACCESS</div>
+      <div class="auth-title">Enter your access code</div>
+      <div class="auth-sub">This workspace is private. Entry is by access code only.</div>
+      <input id="cgInput" type="password" placeholder="access code" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <button id="cgEnter" class="gold-btn">Enter</button>
+      <div id="cgMsg" class="auth-msg"></div>
+    </div>
+    <div class="auth-foot">🔒 Authorised users only · every entry is logged</div>
+  </div>
+</div>
+<div id="cgLogModal" class="auth-modal">
+  <div class="auth-card">
+    <button id="cgLogClose" class="auth-x">✕</button>
+    <div class="auth-inner">
+      <div class="auth-brand">⚓ HELM</div>
+      <div class="auth-title">Access log · this device</div>
+      <div class="auth-sub">Logins recorded in this browser.</div>
+      <div id="cgLogList" class="cglog"></div>
+      <button id="cgLogout" class="abtn">Log out</button>
+    </div>
+  </div>
+</div>
+<div id="cgWelcome" class="cg-toast"></div>
 
 <footer>
   <b>HELM</b> — Engineering Student Events Command Deck · hackathons · competitions · fests · conferences · awards<br>
@@ -1463,7 +1496,35 @@ _ael("authRegister",async()=>{if(!sb)return;amsg("Creating account…");const {e
 _ael("authLogin",async()=>{if(!sb)return;amsg("Logging in…");const {data,error}=await sb.auth.signInWithPassword({email:$("#authEmail").value.trim(),password:$("#authPass").value});if(error){amsg(error.message);return;}user=data.user;await onAuthed();amsg("Synced ✓");setTimeout(()=>{$("#authModal").style.display="none";},600);});
 _ael("authLogout",async()=>{if(sb)await sb.auth.signOut();user=null;updateAuthBtn();renderAuth();});
 
-initStats();refreshBadges();renderDash();pullFeed(false);cloudInit();
+/* ── ACCESS-CODE GATE (replaces account login) ── */
+const CODES={"sreeragmr03":"SREERAG M R","maverick1104":"ARJUN R"};
+const CG_WEBHOOK=(localStorage.getItem("cg_webhook")||"").trim(); /* optional: owner's logging endpoint to receive every login */
+function deviceInfo(){const n=navigator;return{when:new Date().toISOString(),ua:n.userAgent,platform:(n.userAgentData&&n.userAgentData.platform)||n.platform||"",lang:n.language||"",tz:(Intl.DateTimeFormat().resolvedOptions().timeZone)||"",screen:screen.width+"x"+screen.height,viewport:innerWidth+"x"+innerHeight,touch:(n.maxTouchPoints||0)>0};}
+function prettyDevice(d){const ua=d.ua||"";let b="Browser";if(/edg/i.test(ua))b="Edge";else if(/opr|opera/i.test(ua))b="Opera";else if(/chrome|crios/i.test(ua))b="Chrome";else if(/firefox|fxios/i.test(ua))b="Firefox";else if(/safari/i.test(ua))b="Safari";let os=d.platform||"";if(/win/i.test(os))os="Windows";else if(/android/i.test(ua))os="Android";else if(/iphone|ipad|ios/i.test(ua))os="iOS";else if(/mac/i.test(os))os="macOS";else if(/linux/i.test(os))os="Linux";return b+(os?" on "+os:"")+(d.touch?" · touch":"")+" · "+d.screen;}
+function cgLog(){try{return JSON.parse(localStorage.getItem("cg_log")||"[]");}catch(_){return[];}}
+function recordLogin(name){const d=deviceInfo();d.user=name;const log=cgLog();log.unshift(d);localStorage.setItem("cg_log",JSON.stringify(log.slice(0,100)));if(CG_WEBHOOK){try{fetch(CG_WEBHOOK,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/json"},body:JSON.stringify(d)});}catch(_){}}return d;}
+function showWho(){const b=$("#btnWho");if(!b)return;const name=localStorage.getItem("cg_user");if(name){b.style.display="inline-flex";b.textContent="👤 "+name;}else b.style.display="none";}
+function codeGateInit(){
+  showWho();
+  if(localStorage.getItem("cg_user")){document.body.classList.remove("gated");$("#codeGate").style.display="none";return;}
+  document.body.classList.add("gated");$("#codeGate").style.display="flex";
+  const i=$("#cgInput");if(i)setTimeout(()=>i.focus(),60);
+}
+function cgUnlock(name){
+  localStorage.setItem("cg_user",name);
+  const d=recordLogin(name);
+  document.body.classList.remove("gated");$("#codeGate").style.display="none";showWho();
+  const w=$("#cgWelcome");if(w){w.textContent="Welcome, "+name+" · "+prettyDevice(d);w.style.display="block";clearTimeout(window.__cgt);window.__cgt=setTimeout(()=>{w.style.display="none";},6500);}
+}
+function cgTry(){const v=($("#cgInput").value||"").trim().toLowerCase();const name=CODES[v];if(name){$("#cgMsg").textContent="";cgUnlock(name);}else{$("#cgMsg").textContent="Invalid access code — entry denied.";$("#cgInput").value="";$("#cgInput").focus();}}
+function openAccessLog(){const m=$("#cgLogModal");if(!m)return;$("#cgLogList").innerHTML=cgLog().map(d=>`<div class="cglog-row"><div><b>${d.user||"?"}</b> · ${prettyDevice(d)}</div><div class="cglog-when">${new Date(d.when).toLocaleString()} · ${d.tz}</div></div>`).join("")||'<div class="gate-note">No logins recorded on this device yet.</div>';m.style.display="flex";}
+_ael("cgEnter",cgTry);
+{const i=$("#cgInput");if(i)i.addEventListener("keydown",e=>{if(e.key==="Enter")cgTry();});}
+_ael("btnWho",openAccessLog);
+_ael("cgLogClose",()=>{$("#cgLogModal").style.display="none";});
+_ael("cgLogout",()=>{localStorage.removeItem("cg_user");$("#cgLogModal").style.display="none";codeGateInit();});
+
+initStats();refreshBadges();renderDash();pullFeed(false);codeGateInit();
 </script>
 </body>
 </html>
