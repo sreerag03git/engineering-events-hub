@@ -236,6 +236,9 @@ footer b{color:var(--gold2)}
 .rembar .rb-bell{background:none;border:1px solid var(--line);border-radius:8px;color:var(--mu);font-size:11px;padding:4px 9px;cursor:pointer;white-space:nowrap}
 .rembar .rb-bell.on{color:var(--gold2);border-color:var(--goldln)}
 .rembar .rb-x{background:none;border:none;color:var(--mu);cursor:pointer;font-size:14px}
+body.gated .navbar,body.gated .wrap{filter:blur(5px);pointer-events:none;user-select:none}
+.gate-skip{font-size:11px;color:var(--mu);background:none;border:none;cursor:pointer;text-decoration:underline;align-self:flex-start}
+.gate-note{font-size:11px;color:var(--mu);line-height:1.5}
 @media(max-width:640px){
   html,body{overflow-x:hidden}
   .hero-in{padding:22px 16px 18px}
@@ -487,11 +490,14 @@ footer b{color:var(--gold2)}
       <input id="cfgUrl" placeholder="Supabase project URL">
       <input id="cfgKey" placeholder="Supabase anon public key">
       <button id="authSaveCfg" class="gold-btn">Save &amp; reload</button>
+      <div class="gate-note">Connect Supabase to lock this app and control who can sign in.</div>
+      <button id="gateSkip" class="gate-skip">Continue without login (app stays unlocked)</button>
     </div>
     <div id="authForm">
       <input id="authEmail" type="email" placeholder="email" autocomplete="email">
       <input id="authPass" type="password" placeholder="password (min 6 chars)" autocomplete="current-password">
       <div class="auth-row"><button id="authLogin" class="gold-btn">Log in</button><button id="authRegister" class="abtn">Register</button></div>
+      <label class="gate-note" style="display:flex;gap:7px;align-items:center;cursor:pointer"><input type="checkbox" id="inviteOnly" style="width:auto"> Invite-only — hide Register (also switch off sign-ups in Supabase to enforce it)</label>
     </div>
     <div id="authAccount">
       <div class="auth-who">Signed in as <b id="authWho"></b> — your console (statuses, notes, reminders) syncs across devices.</div>
@@ -1386,6 +1392,8 @@ function renderAuth(){
   $("#authAccount").style.display=user?"flex":"none";
   if(user)$("#authWho").textContent=user.email||"your account";
   if(!cfg)amsg("One-time: paste your free Supabase project URL + anon key to turn on accounts. (Ask Claude to bake them in so every device is automatic.)");
+  const io=$("#inviteOnly");if(io)io.checked=!!S.inviteOnly;
+  const reg=$("#authRegister");if(reg)reg.style.display=S.inviteOnly?"none":"block";
 }
 function updateAuthBtn(){const b=$("#btnAuth");if(b)b.textContent=user?("🟢 "+(user.email||"synced")):"🔐 Sign in / Sync";}
 async function cloudPull(){
@@ -1400,17 +1408,34 @@ function cloudPush(now){
   const run=()=>sb.from("console").upsert({user_id:user.id,data:{st:S.st,notes:S.notes,custom:S.custom},updated_at:new Date().toISOString()}).then(()=>{},()=>{});
   if(now)run();else pushT=setTimeout(run,800);
 }
-async function onAuthed(){await cloudPull();refreshBadges();initStats();rerender();updateAuthBtn();renderAuth();}
+async function onAuthed(){await cloudPull();refreshBadges();initStats();rerender();updateAuthBtn();renderAuth();gateCheck();}
 function cloudInit(){
   updateAuthBtn();
-  if(!cloudConfigured())return;
-  try{sb=window.supabase.createClient(SB_URL,SB_KEY);}catch(_){return;}
-  sb.auth.getSession().then(({data})=>{if(data&&data.session){user=data.session.user;onAuthed();}updateAuthBtn();});
-  sb.auth.onAuthStateChange((_e,s)=>{user=s?s.user:null;updateAuthBtn();renderAuth();});
+  if(!cloudConfigured()){gateCheck();return;}
+  try{sb=window.supabase.createClient(SB_URL,SB_KEY);}catch(_){gateCheck();return;}
+  gateCheck();
+  sb.auth.getSession().then(({data})=>{if(data&&data.session){user=data.session.user;onAuthed();}updateAuthBtn();gateCheck();});
+  sb.auth.onAuthStateChange((_e,s)=>{user=s?s.user:null;updateAuthBtn();renderAuth();gateCheck();});
+}
+/* gate: blur + block the app until signed in (when Supabase is connected) */
+let gateSkipped=false,manualOpen=false;
+function gateCheck(){
+  const m=$("#authModal");if(!m)return;
+  const cfg=cloudConfigured();
+  const needLogin=cfg&&!user&&!gateSkipped;
+  const needSetup=!cfg&&!gateSkipped;
+  const gate=needLogin||needSetup;
+  document.body.classList.toggle("gated",gate);
+  if(gate){m.style.display="flex";renderAuth();}
+  else if(!manualOpen){m.style.display="none";}
+  const x=$("#authClose");if(x)x.style.display=needLogin?"none":"block";
+  const gs=$("#gateSkip");if(gs)gs.style.display=needSetup?"block":"none";
 }
 const _ael=(id,fn)=>{const el=$("#"+id);if(el)el.addEventListener("click",fn);};
-_ael("btnAuth",()=>{$("#authModal").style.display="flex";renderAuth();});
-_ael("authClose",()=>{$("#authModal").style.display="none";});
+_ael("btnAuth",()=>{manualOpen=true;$("#authModal").style.display="flex";renderAuth();});
+_ael("authClose",()=>{manualOpen=false;$("#authModal").style.display="none";gateCheck();});
+_ael("gateSkip",()=>{gateSkipped=true;manualOpen=false;$("#authModal").style.display="none";document.body.classList.remove("gated");});
+{const _io=$("#inviteOnly");if(_io)_io.addEventListener("change",()=>{S.inviteOnly=_io.checked;save();renderAuth();});}
 _ael("authSaveCfg",()=>{const u=$("#cfgUrl").value.trim(),k=$("#cfgKey").value.trim();if(!u||!k){amsg("Enter both the URL and the anon key.");return;}localStorage.setItem("sb_url",u);localStorage.setItem("sb_key",k);location.reload();});
 _ael("authRegister",async()=>{if(!sb)return;amsg("Creating account…");const {error}=await sb.auth.signUp({email:$("#authEmail").value.trim(),password:$("#authPass").value});amsg(error?error.message:"Account created. If email confirmation is on, confirm via the email link, then log in.");});
 _ael("authLogin",async()=>{if(!sb)return;amsg("Logging in…");const {data,error}=await sb.auth.signInWithPassword({email:$("#authEmail").value.trim(),password:$("#authPass").value});if(error){amsg(error.message);return;}user=data.user;await onAuthed();amsg("Synced ✓");setTimeout(()=>{$("#authModal").style.display="none";},600);});
