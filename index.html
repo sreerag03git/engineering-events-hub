@@ -239,6 +239,23 @@ footer b{color:var(--gold2)}
 body.gated .navbar,body.gated .wrap{filter:blur(5px);pointer-events:none;user-select:none}
 .gate-skip{font-size:11px;color:var(--mu);background:none;border:none;cursor:pointer;text-decoration:underline;align-self:flex-start}
 .gate-note{font-size:11px;color:var(--mu);line-height:1.5}
+/* ── premium login gate ── */
+.auth-modal{background:radial-gradient(ellipse 70% 55% at 50% 0%,rgba(232,184,75,.10),transparent 62%),radial-gradient(ellipse 60% 50% at 50% 100%,rgba(45,212,191,.07),transparent 60%),rgba(4,8,16,.82)}
+.auth-card{max-width:384px;padding:0;gap:0;overflow:hidden;background:linear-gradient(180deg,#101d33,#0a1527);border:1px solid var(--line2);border-radius:18px;box-shadow:0 30px 80px -24px rgba(0,0,0,.85),inset 0 1px 0 rgba(255,255,255,.05)}
+.auth-card::before{content:"";display:block;height:3px;background:linear-gradient(90deg,transparent,var(--gold),var(--gold2),var(--gold),transparent)}
+.auth-inner{display:flex;flex-direction:column;gap:12px;padding:26px 24px 22px}
+.auth-brand{font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+.auth-title{font-size:19px;font-weight:600;color:var(--tx);line-height:1.25}
+.auth-sub{font-size:12px;color:var(--mu);line-height:1.5;margin-top:-5px}
+.auth-card input{background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:11px;padding:11px 13px;font-size:13.5px;transition:border-color .15s,box-shadow .15s}
+.auth-card input:focus{border-color:var(--goldln);box-shadow:0 0 0 3px rgba(232,184,75,.14)}
+.auth-card .gold-btn{padding:11px 18px;border-radius:11px;font-size:13px;box-shadow:0 8px 20px -9px rgba(232,184,75,.55)}
+.auth-card .abtn{padding:11px 18px;border-radius:11px;font-size:13px}
+.auth-row{gap:9px}
+.auth-msg{color:var(--gold2)}
+.auth-x{top:13px;right:14px;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;transition:background .15s,color .15s;z-index:1}
+.auth-x:hover{background:rgba(255,255,255,.07);color:var(--tx)}
+.auth-foot{border-top:1px solid var(--line);padding:12px 20px;font-size:10.5px;color:var(--mu);text-align:center;background:rgba(255,255,255,.015)}
 @media(max-width:640px){
   html,body{overflow-x:hidden}
   .hero-in{padding:22px 16px 18px}
@@ -484,7 +501,10 @@ body.gated .navbar,body.gated .wrap{filter:blur(5px);pointer-events:none;user-se
 <div id="authModal" class="auth-modal">
   <div class="auth-card">
     <button id="authClose" class="auth-x">✕</button>
-    <div class="auth-title">Account &amp; sync</div>
+    <div class="auth-inner">
+    <div class="auth-brand">⚓ HELM</div>
+    <div class="auth-title">Sign in to your command deck</div>
+    <div class="auth-sub">Your tracked events, deadlines &amp; reminders — synced across every device.</div>
     <div id="authMsg" class="auth-msg"></div>
     <div id="authConfig">
       <input id="cfgUrl" placeholder="Supabase project URL">
@@ -503,6 +523,8 @@ body.gated .navbar,body.gated .wrap{filter:blur(5px);pointer-events:none;user-se
       <div class="auth-who">Signed in as <b id="authWho"></b> — your console (statuses, notes, reminders) syncs across devices.</div>
       <button id="authLogout" class="abtn">Log out</button>
     </div>
+    </div>
+    <div class="auth-foot">🔒 Secure sign-in via Supabase · this site never stores your password</div>
   </div>
 </div>
 
