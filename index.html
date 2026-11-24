@@ -388,7 +388,7 @@ body.gated .navbar,body.gated .wrap{filter:blur(5px);pointer-events:none;user-se
 <!-- ═══════════ ALL EVENTS ═══════════ -->
 <div class="view" id="v-all">
   <div class="fbar">
-    <div class="frow"><input id="q" placeholder="🔍  Search events, cities, organisers, topics, deadlines…"></div>
+    <div class="frow"><input id="q" placeholder="🔍  Filter by anything — topic, country, month, theme, organiser, online/hybrid…"></div>
     <div class="frow"><span class="flab">Type</span>
       <button class="chip on" data-f="type" data-val="all">All</button>
       <button class="chip" data-f="type" data-val="competition">🏆 Competition</button>
@@ -409,6 +409,12 @@ body.gated .navbar,body.gated .wrap{filter:blur(5px);pointer-events:none;user-se
       <button class="chip" data-f="field" data-val="marine">⚓ Marine</button>
       <button class="chip" data-f="field" data-val="cyber">🔒 Cyber</button>
       <button class="chip" data-f="field" data-val="any">🌐 Any/Interdisc.</button>
+    </div>
+    <div class="frow"><span class="flab">Mode</span>
+      <button class="chip on" data-f="mode" data-val="all">All</button>
+      <button class="chip" data-f="mode" data-val="online">💻 Online</button>
+      <button class="chip" data-f="mode" data-val="offline">📍 In-person</button>
+      <button class="chip" data-f="mode" data-val="hybrid">🔀 Hybrid</button>
     </div>
     <div class="frow"><span class="flab">Region</span>
       <button class="chip on" data-f="region" data-val="all">🌐 All</button>
@@ -1034,6 +1040,15 @@ const TYPE={competition:"🏆 Competition",hackathon:"💻 Hackathon",conference
 const TYPESHORT={competition:"Competition",hackathon:"Hackathon",conference:"Conference",fest:"Student Fest",award:"Award"};
 const FIELD={software:"💻 Software / AI / Data",robotics:"🤖 Robotics / Embedded",mechanical:"⚙️ Mechanical / Automotive",aerospace:"🚀 Aerospace / Space",civil:"🏗️ Civil / Structural",electrical:"⚡ Electrical / Electronics",chemical:"⚗️ Chemical / Energy",marine:"⚓ Marine / Offshore",cyber:"🔒 Cybersecurity",any:"🌐 Any / Interdisciplinary"};
 const fieldOf=e=>e.field||"marine";
+function modeOf(e){
+  const t=((e.city||"")+" "+(e.desc||"")+" "+(e.what||"")+" "+(e.dateText||"")).toLowerCase();
+  if(t.includes("hybrid"))return"hybrid";
+  const online=/\bonline\b|remote|virtual/.test(t);
+  if(!online)return"offline";
+  if(/in-person|in person|campus|on campus|finals|venue|local host|cities|nodal|world championship|\+ /.test(t))return"hybrid";
+  return"online";
+}
+const MODE={online:"💻 Online",offline:"📍 In-person",hybrid:"🔀 Hybrid"};
 const STATUSES=["interested","preparing","submitted","accepted","attended","skipped"];
 const STLBL={interested:"Interested",preparing:"Preparing",submitted:"Submitted",accepted:"Accepted 🎉",attended:"Attended",skipped:"Skipped"};
 
@@ -1047,7 +1062,7 @@ if(S.feedEvents.length){const _have=new Set(EVENTS.map(e=>e.id));for(const e of 
 const save=()=>{localStorage.setItem(KEY,JSON.stringify(S));refreshBadges();if(typeof cloudPush==="function")cloudPush();};
 const trackedIds=()=>[...new Set([...Object.keys(S.st),...Object.keys(S.notes)])].filter(id=>S.st[id]||S.notes[id]);
 
-const F={q:"",type:"all",field:"all",region:"all",year:"all",free:false,past:false,dl:false,group:"date",sort:"date"};
+const F={q:"",type:"all",field:"all",region:"all",year:"all",mode:"all",free:false,past:false,dl:false,group:"date",sort:"date"};
 
 /* ── render helpers ── */
 function cdownHtml(e){
@@ -1128,12 +1143,14 @@ function filtered(){
     if(!F.past&&isPast(e))return false;
     if(F.type!=="all"&&e.type!==F.type)return false;
     if(F.field!=="all"&&fieldOf(e)!==F.field)return false;
+    if(F.mode!=="all"&&modeOf(e)!==F.mode)return false;
     if(F.region!=="all"&&e.region!==F.region)return false;
     if(F.year!=="all"&&e.year!==F.year)return false;
     if(F.free&&!e.free)return false;
     if(F.dl&&!(e.deadlines||[]).some(d=>d.d&&days(d.d)>=0))return false;
     if(F.q){
-      const hay=[e.name,e.org,e.city,e.country,e.desc,e.what,e.fee,e.dateText,(e.deadlines||[]).map(d=>d.txt).join(" ")].join(" ").toLowerCase();
+      const mon=e.start?MONTHS[P(e.start).getMonth()]:"";
+      const hay=[e.name,e.org,e.city,e.country,e.desc,e.what,e.fee,e.dateText,e.year,TYPE[e.type],FIELD[fieldOf(e)],REG[e.region],MODE[modeOf(e)],mon,(e.deadlines||[]).map(d=>d.txt).join(" ")].join(" ").toLowerCase();
       if(!hay.includes(F.q))return false;
     }
     return true;
