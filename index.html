@@ -80,6 +80,9 @@ h1.brand span{color:var(--gold)}
 #q{flex:1;min-width:220px;background:var(--navy2);border:1px solid var(--line);border-radius:10px;padding:9px 14px;color:var(--tx);font-size:13px;outline:none;transition:border-color .18s}
 #q:focus{border-color:var(--goldln)}
 #q::placeholder{color:var(--mu)}
+.vq{width:100%;background:var(--navy2);border:1px solid var(--line);border-radius:10px;padding:9px 14px;color:var(--tx);font-size:13px;outline:none;margin-bottom:14px;transition:border-color .18s}
+.vq:focus{border-color:var(--goldln)}
+.vq::placeholder{color:var(--mu)}
 .count-line{font-size:12.5px;color:var(--mu);margin:2px 2px 14px}
 .count-line b{color:var(--gold2);font-family:var(--mono)}
 
@@ -457,18 +460,21 @@ body.gated .navbar,body.gated .wrap{filter:blur(5px);pointer-events:none;user-se
 <!-- ═══════════ HACKATHONS ═══════════ -->
 <div class="view" id="v-hack">
   <div class="info-box gold">Every hackathon I can track — <b>government, defence &amp; space, corporate, and the global student-hackathon circuit</b> — plus the <b>platforms where hundreds more live</b> (MLH, Devpost, Devfolio, Unstop, HackerEarth, ETHGlobal). Open to engineering students of any field. Sorted soonest-deadline first.</div>
+  <input class="vq" data-vq="hack" placeholder="🔍  Search hackathons — topic, country, month, online/hybrid…">
   <div class="egrid" id="hackGrid"></div>
 </div>
 
 <!-- ═══════════ COMPETITIONS ═══════════ -->
 <div class="view" id="v-comp">
   <div class="info-box gold">These are the events where you <b>build, design, and compete</b>, or <b>submit a paper / essay / project</b> — the highest-CV-value category. Global elite first. Everything here is open to student entrants.</div>
+  <input class="vq" data-vq="comp" placeholder="🔍  Search competitions &amp; awards — topic, country, field…">
   <div class="egrid" id="compGrid"></div>
 </div>
 
 <!-- ═══════════ INDIA & DEFENCE ═══════════ -->
 <div class="view" id="v-india">
   <div class="info-box">India has the richest, cheapest ecosystem of events you can enter <b>right now</b> — national defence &amp; space hackathons (you've already done ISRO BAH &amp; DAE Techtathon), naval innovation challenges, and NAOE college fests. Most are free. Follow the official handles for exact dates as they drop.</div>
+  <input class="vq" data-vq="india" placeholder="🔍  Search India &amp; defence events — topic, city, field…">
   <div class="sect-h"><h2>🛡️ National Defence &amp; Space Challenges</h2><span class="sub">DRDO · ISRO · Indian Navy · DAE · shipyard PSUs — open to Indian students</span></div>
   <div class="egrid" id="defGrid"></div>
   <div class="sect-h"><h2>🎓 College Fests &amp; India Conferences</h2><span class="sub">present papers, race models, network</span></div>
@@ -507,6 +513,7 @@ body.gated .navbar,body.gated .wrap{filter:blur(5px);pointer-events:none;user-se
   <div class="sect-h"><h2 style="font-size:15px">Custom reminders</h2></div>
   <div id="customList"></div>
   <div class="sect-h"><h2 style="font-size:15px">Tracked events</h2><span class="sub">set a status on any event card to pin it here</span></div>
+  <input class="vq" data-vq="console" placeholder="🔍  Filter your tracked events — topic, country, month…">
   <div class="egrid" id="consGrid"></div>
 </div>
 
@@ -1049,6 +1056,12 @@ function modeOf(e){
   return"online";
 }
 const MODE={online:"💻 Online",offline:"📍 In-person",hybrid:"🔀 Hybrid"};
+function matchQ(e,q){
+  if(!q)return true;
+  const mon=e.start?MONTHS[P(e.start).getMonth()]:"";
+  const hay=[e.name,e.org,e.city,e.country,e.desc,e.what,e.fee,e.dateText,e.year,TYPE[e.type],FIELD[fieldOf(e)],REG[e.region],MODE[modeOf(e)],mon,(e.deadlines||[]).map(d=>d.txt).join(" ")].join(" ").toLowerCase();
+  return hay.includes(q);
+}
 const STATUSES=["interested","preparing","submitted","accepted","attended","skipped"];
 const STLBL={interested:"Interested",preparing:"Preparing",submitted:"Submitted",accepted:"Accepted 🎉",attended:"Attended",skipped:"Skipped"};
 
@@ -1063,6 +1076,7 @@ const save=()=>{localStorage.setItem(KEY,JSON.stringify(S));refreshBadges();if(t
 const trackedIds=()=>[...new Set([...Object.keys(S.st),...Object.keys(S.notes)])].filter(id=>S.st[id]||S.notes[id]);
 
 const F={q:"",type:"all",field:"all",region:"all",year:"all",mode:"all",free:false,past:false,dl:false,group:"date",sort:"date"};
+const VQ={hack:"",comp:"",india:"",console:""}; /* per-tab search queries */
 
 /* ── render helpers ── */
 function cdownHtml(e){
@@ -1148,11 +1162,7 @@ function filtered(){
     if(F.year!=="all"&&e.year!==F.year)return false;
     if(F.free&&!e.free)return false;
     if(F.dl&&!(e.deadlines||[]).some(d=>d.d&&days(d.d)>=0))return false;
-    if(F.q){
-      const mon=e.start?MONTHS[P(e.start).getMonth()]:"";
-      const hay=[e.name,e.org,e.city,e.country,e.desc,e.what,e.fee,e.dateText,e.year,TYPE[e.type],FIELD[fieldOf(e)],REG[e.region],MODE[modeOf(e)],mon,(e.deadlines||[]).map(d=>d.txt).join(" ")].join(" ").toLowerCase();
-      if(!hay.includes(F.q))return false;
-    }
+    if(F.q&&!matchQ(e,F.q))return false;
     return true;
   });
 }
@@ -1200,7 +1210,7 @@ function renderAll(){
 
 /* ── COMPETITIONS tab ── */
 function renderComp(){
-  const list=sortByDate(EVENTS.filter(e=>!isPast(e)&&(e.type==="competition"||e.type==="award")));
+  const list=sortByDate(EVENTS.filter(e=>!isPast(e)&&(e.type==="competition"||e.type==="award")&&matchQ(e,VQ.comp)));
   list.sort((a,b)=>((b.tier?1:0)-(a.tier?1:0)));
   const grid=$("#compGrid");
   grid.innerHTML=list.map(cardHtml).join("");
@@ -1214,7 +1224,7 @@ function soonestDl(e){
   return ds.length?Math.min(...ds):99999;
 }
 function renderHack(){
-  const list=EVENTS.filter(e=>!isPast(e)&&e.type==="hackathon").sort((a,b)=>soonestDl(a)-soonestDl(b));
+  const list=EVENTS.filter(e=>!isPast(e)&&e.type==="hackathon"&&matchQ(e,VQ.hack)).sort((a,b)=>soonestDl(a)-soonestDl(b));
   const grid=$("#hackGrid");
   grid.innerHTML=list.length?list.map(cardHtml).join(""):'<div class="no-results">No hackathons loaded.</div>';
   bindCards(grid);
@@ -1222,8 +1232,8 @@ function renderHack(){
 
 /* ── INDIA & DEFENCE tab ── */
 function renderIndia(){
-  const def=sortByDate(EVENTS.filter(e=>!isPast(e)&&e.defence));
-  const fests=sortByDate(EVENTS.filter(e=>!isPast(e)&&e.region==="india"&&!e.defence));
+  const def=sortByDate(EVENTS.filter(e=>!isPast(e)&&e.defence&&matchQ(e,VQ.india)));
+  const fests=sortByDate(EVENTS.filter(e=>!isPast(e)&&e.region==="india"&&!e.defence&&matchQ(e,VQ.india)));
   $("#defGrid").innerHTML=def.map(cardHtml).join("");
   $("#indiaFestGrid").innerHTML=fests.map(cardHtml).join("");
   bindCards($("#defGrid"));bindCards($("#indiaFestGrid"));
@@ -1309,7 +1319,7 @@ function renderConsole(){
       ${c.date?`<span class="dlv-date">${fmt(c.date)}</span>`:""}<button class="del-x" data-del="${c.id}">✕</button>
     </div>`}).join(""):'<div class="empty-note">No custom reminders yet — add abstract dates, HOD follow-ups, membership renewals…</div>';
   cl.querySelectorAll("[data-del]").forEach(b=>b.addEventListener("click",()=>{S.custom=S.custom.filter(c=>String(c.id)!==b.dataset.del);save();renderConsole()}));
-  const ids=trackedIds(),evs=sortByDate(EVENTS.filter(e=>ids.includes(e.id))),grid=$("#consGrid");
+  const ids=trackedIds(),evs=sortByDate(EVENTS.filter(e=>ids.includes(e.id)&&matchQ(e,VQ.console))),grid=$("#consGrid");
   grid.innerHTML=evs.length?evs.map(cardHtml).join(""):'<div class="empty-note" style="grid-column:1/-1">Nothing tracked yet. On any event card, use <b>＋ Track…</b> to set a status — it pins here with countdowns and your notes.</div>';
   bindCards(grid);
 }
@@ -1377,6 +1387,7 @@ $$(".chip[data-f]").forEach(c=>c.addEventListener("click",()=>{
   syncChips();renderAll();
 }));
 $("#q").addEventListener("input",()=>{F.q=$("#q").value.toLowerCase().trim();renderAll()});
+$$(".vq").forEach(inp=>inp.addEventListener("input",()=>{VQ[inp.dataset.vq]=inp.value.toLowerCase().trim();rerender();}));
 $("#dlPastToggle").addEventListener("click",()=>{dlShowPast=!dlShowPast;renderDeadlines()});
 
 /* ── CHECK FOR UPDATES (pull new events from a feed the scheduled hunter writes) ── */
