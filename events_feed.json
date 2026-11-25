@@ -1,5 +1,5 @@
 {
-"updated": "2026-11-24",
+"updated": "2026-11-25",
 "events": [
 {
 "id": "hackwithaditya26",
@@ -697,6 +697,226 @@
 {
 "t": "Watch",
 "txt": "No 2027 edition confirmed — watch MAST UAE channels"
+}
+],
+"est": true
+},
+{
+"id": "otc27",
+"name": "OTC 2027 — Offshore Technology Conference",
+"org": "OTC (SPE/ASME/AIME etc.)",
+"type": "conference",
+"region": "americas",
+"flag": "🇺🇸",
+"country": "USA",
+"city": "NRG Park, Houston, TX",
+"start": "2027-05-03",
+"end": "2027-05-06",
+"dateText": "~3–6 May 2027 (est.)",
+"year": "2027",
+"free": false,
+"field": "marine",
+"tier": 1,
+"what": "Submit an abstract / present a paper — open to all (not student-only). World's largest offshore-energy conference.",
+"desc": "Deepwater, subsea, offshore wind, marine structures & pipelines. Full technical paper program; ADNOC/Aramco/NPCC all attend. Abstracts typically close ~Oct the year before.",
+"fee": "Delegate; ~$50 student day pass",
+"url": "https://www.otcnet.org",
+"deadlines": [
+{
+"t": "Abstract",
+"d": "2026-10-01",
+"txt": "2027 abstracts ~Sep–Oct 2026 (likely closed — target 2028 to present)"
+}
+],
+"est": true
+},
+{
+"id": "iptc27",
+"name": "IPTC 2027 — International Petroleum Technology Conference",
+"org": "SPE · EAGE · AAPG · SEG",
+"type": "conference",
+"region": "gcc",
+"flag": "🌍",
+"country": "Gulf / Asia (rotating)",
+"city": "TBC",
+"start": null,
+"end": null,
+"dateText": "~early 2027 (rotating · verify)",
+"year": "2027",
+"free": false,
+"field": "marine",
+"what": "Present a paper — open to all; major offshore/petroleum technical conference, often hosted in the GCC.",
+"desc": "Offshore, subsea, energy-transition & marine technical sessions; strong Gulf/Asia host rotation (Dhahran, Doha, Bangkok…). Full call for papers.",
+"fee": "Delegate; student rates",
+"url": "https://www.iptcnet.org",
+"deadlines": [
+{
+"t": "Watch",
+"txt": "CFP ~mid-year before — iptcnet.org"
+}
+],
+"est": true
+},
+{
+"id": "speatce27",
+"name": "SPE ATCE 2027 — Annual Technical Conference & Exhibition",
+"org": "Society of Petroleum Engineers",
+"type": "conference",
+"region": "global",
+"flag": "🌐",
+"country": "USA / rotating",
+"city": "TBC",
+"start": null,
+"end": null,
+"dateText": "~Sep–Oct 2027",
+"year": "2027",
+"free": false,
+"field": "marine",
+"what": "Submit a paper to SPE's flagship technical conference — open to all.",
+"desc": "The premier petroleum-engineering paper venue, with offshore/marine & energy-transition tracks. Students and professionals both present.",
+"fee": "Delegate; student rates",
+"url": "https://www.spe.org/en/events/",
+"deadlines": [
+{
+"t": "Abstract",
+"txt": "Abstracts ~Jan–Feb 2027 (est.)"
+}
+],
+"est": true
+},
+{
+"id": "imece27",
+"name": "ASME IMECE 2027 — Int'l Mechanical Engineering Congress & Expo",
+"org": "ASME",
+"type": "conference",
+"region": "americas",
+"flag": "🇺🇸",
+"country": "USA",
+"city": "TBC",
+"start": "2027-11-05",
+"end": "2027-11-11",
+"dateText": "~Nov 2027 (est.)",
+"year": "2027",
+"free": false,
+"field": "mechanical",
+"what": "Present a paper in any mechanical-engineering track — huge open call for papers.",
+"desc": "Thousands of papers across fluids, dynamics, materials, ocean/offshore, energy, robotics. One of the largest general mechanical-engineering CFP congresses; open to all.",
+"fee": "Delegate; ASME student rates",
+"url": "https://event.asme.org/IMECE",
+"deadlines": [
+{
+"t": "Abstract",
+"txt": "Abstracts ~Mar 2027 (est.)"
+}
+],
+"est": true
+},
+{
+"id": "icce28",
+"name": "ICCE 2028 — Int'l Conference on Coastal Engineering",
+"org": "ASCE-COPRI",
+"type": "conference",
+"region": "global",
+"flag": "🌐",
+"country": "Rotating",
+"city": "TBC",
+"start": null,
+"end": null,
+"dateText": "2028 (biennial)",
+"year": "2028",
+"free": false,
+"field": "civil",
+"what": "Present a peer-reviewed paper on coastal & ocean engineering — open to all.",
+"desc": "Waves, sediment transport, coastal structures, ports & harbours. Biennial; proceedings widely cited. The flagship coastal-engineering CFP.",
+"fee": "Delegate; student rates",
+"url": "https://www.google.com/search?q=International+Conference+on+Coastal+Engineering+ICCE+2028",
+"deadlines": [
+{
+"t": "Watch",
+"txt": "CFP opens ~2027 for the 2028 edition"
+}
+],
+"est": true
+},
+{
+"id": "imam27",
+"name": "IMAM 2027 — Maritime Association of the Mediterranean Congress",
+"org": "IMAM",
+"type": "conference",
+"region": "europe",
+"flag": "🇪🇺",
+"country": "Mediterranean (rotating)",
+"city": "TBC",
+"start": null,
+"end": null,
+"dateText": "~2027 (biennial · verify)",
+"year": "2027",
+"free": false,
+"field": "marine",
+"what": "Present a peer-reviewed paper — ship design, structures, hydrodynamics; open to all.",
+"desc": "International Maritime Association of the Mediterranean congress — naval architecture & marine engineering, strong European academic + industry mix.",
+"fee": "Delegate",
+"url": "https://www.google.com/search?q=IMAM+International+Maritime+Association+Mediterranean+congress+2027",
+"deadlines": [
+{
+"t": "Watch",
+"txt": "CFP ~early 2027 (est.)"
+}
+],
+"est": true
+},
+{
+"id": "issc",
+"name": "ISSC — Int'l Ship & Offshore Structures Congress",
+"org": "ISSC",
+"type": "conference",
+"region": "global",
+"flag": "🌐",
+"country": "Rotating",
+"city": "TBC",
+"start": null,
+"end": null,
+"dateText": "Triennial — watch for next edition",
+"year": "2027",
+"free": false,
+"field": "marine",
+"rolling": true,
+"what": "Contribute to / present at the world authority congress on ship & offshore structures.",
+"desc": "ISSC committee reports + technical discussion — the top forum for ship & offshore structural research (fatigue, ultimate strength, loads, reliability).",
+"fee": "Delegate",
+"url": "https://www.google.com/search?q=International+Ship+and+Offshore+Structures+Congress+ISSC",
+"deadlines": [
+{
+"t": "Watch",
+"txt": "Next congress + CFP — ISSC committee"
+}
+],
+"est": true
+},
+{
+"id": "wmtc",
+"name": "WMTC — World Maritime Technology Conference",
+"org": "RINA / SNAME / IMarEST et al.",
+"type": "conference",
+"region": "global",
+"flag": "🌐",
+"country": "Rotating",
+"city": "TBC",
+"start": null,
+"end": null,
+"dateText": "Triennial — watch for next edition",
+"year": "2027",
+"free": false,
+"field": "marine",
+"rolling": true,
+"what": "Present a paper at the umbrella congress of the world's maritime-technology societies.",
+"desc": "WMTC brings together RINA, SNAME, IMarEST and peer societies — the broadest naval-architecture / marine-engineering CFP. Prestigious global audience.",
+"fee": "Delegate; society-member rates",
+"url": "https://www.google.com/search?q=World+Maritime+Technology+Conference+WMTC+next+edition",
+"deadlines": [
+{
+"t": "Watch",
+"txt": "Next WMTC + CFP — via RINA / SNAME"
 }
 ],
 "est": true
