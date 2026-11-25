@@ -473,9 +473,9 @@
 "flag": "🇦🇪",
 "country": "UAE",
 "city": "ADNEC, Abu Dhabi",
-"start": "2027-11-02",
-"end": "2027-11-05",
-"dateText": "~2–5 Nov 2027 (est.)",
+"start": "2027-11-01",
+"end": "2027-11-04",
+"dateText": "~1–4 Nov 2027 (Nov confirmed; days est.)",
 "year": "2027",
 "free": true,
 "field": "marine",
@@ -581,7 +581,7 @@
 "city": "Dubai World Trade Centre",
 "start": null,
 "end": null,
-"dateText": "2027 · Dubai (dates TBC)",
+"dateText": "~Sep–Oct 2027 · Dubai (TBC)",
 "year": "2027",
 "free": true,
 "field": "marine",
@@ -608,7 +608,7 @@
 "city": "ADNEC, Abu Dhabi",
 "start": "2027-01-12",
 "end": "2027-01-14",
-"dateText": "~mid-Jan 2027 (est.)",
+"dateText": "12–14 Jan 2027",
 "year": "2027",
 "free": true,
 "field": "any",
@@ -622,7 +622,8 @@
 "txt": "Opens ~Sep–Oct 2026"
 }
 ],
-"est": true
+"est": false,
+"ver": true
 },
 {
 "id": "offshorearabia27",
@@ -711,8 +712,8 @@
 "country": "USA",
 "city": "NRG Park, Houston, TX",
 "start": "2027-05-03",
-"end": "2027-05-06",
-"dateText": "~3–6 May 2027 (est.)",
+"end": "2027-05-05",
+"dateText": "3–5 May 2027",
 "year": "2027",
 "free": false,
 "field": "marine",
@@ -728,20 +729,21 @@
 "txt": "2027 abstracts ~Sep–Oct 2026 (likely closed — target 2028 to present)"
 }
 ],
-"est": true
+"est": false,
+"ver": true
 },
 {
 "id": "iptc27",
 "name": "IPTC 2027 — International Petroleum Technology Conference",
 "org": "SPE · EAGE · AAPG · SEG",
 "type": "conference",
-"region": "gcc",
-"flag": "🌍",
-"country": "Gulf / Asia (rotating)",
-"city": "TBC",
-"start": null,
-"end": null,
-"dateText": "~early 2027 (rotating · verify)",
+"region": "asia",
+"flag": "🇹🇭",
+"country": "Thailand",
+"city": "Bangkok · CentralWorld",
+"start": "2027-03-24",
+"end": "2027-03-26",
+"dateText": "24–26 Mar 2027",
 "year": "2027",
 "free": false,
 "field": "marine",
@@ -755,20 +757,21 @@
 "txt": "CFP ~mid-year before — iptcnet.org"
 }
 ],
-"est": true
+"est": false,
+"ver": true
 },
 {
 "id": "speatce27",
 "name": "SPE ATCE 2027 — Annual Technical Conference & Exhibition",
 "org": "Society of Petroleum Engineers",
 "type": "conference",
-"region": "global",
-"flag": "🌐",
-"country": "USA / rotating",
-"city": "TBC",
-"start": null,
-"end": null,
-"dateText": "~Sep–Oct 2027",
+"region": "americas",
+"flag": "🇺🇸",
+"country": "USA",
+"city": "Denver, CO",
+"start": "2027-10-11",
+"end": "2027-10-13",
+"dateText": "11–13 Oct 2027",
 "year": "2027",
 "free": false,
 "field": "marine",
@@ -782,7 +785,8 @@
 "txt": "Abstracts ~Jan–Feb 2027 (est.)"
 }
 ],
-"est": true
+"est": false,
+"ver": true
 },
 {
 "id": "imece27",
@@ -793,9 +797,9 @@
 "flag": "🇺🇸",
 "country": "USA",
 "city": "TBC",
-"start": "2027-11-05",
-"end": "2027-11-11",
-"dateText": "~Nov 2027 (est.)",
+"start": null,
+"end": null,
+"dateText": "~Nov 2027 · USA (TBC)",
 "year": "2027",
 "free": false,
 "field": "mechanical",
